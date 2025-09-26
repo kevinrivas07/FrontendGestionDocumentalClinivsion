@@ -1,0 +1,255 @@
+/* Estilos generales */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+  background-color: white; /* ✅ fondo blanco */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Contenedor principal en dos columnas */
+.main-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  background-color: white;
+}
+
+/* Contenedor de la imagen */
+.image-container {
+  flex: 1;
+  max-width: 50%; /* mitad de la pantalla */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.login-image {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.login-image:hover {
+  transform: scale(1.02);
+}
+
+/* Contenedor del login */
+.login-container {
+  flex: 1;
+  max-width: 50%; /* mitad de la pantalla */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+}
+
+/* Caja del login */
+.login-box {
+  width: 400px;
+  max-width: 90%;
+  background-color: #fff;
+  padding: 50px;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+/* Título */
+.login-box h2 {
+  font-size: 24px;
+  color: #7f86d4;
+  margin-bottom: 20px;
+}
+
+/* Etiquetas */
+.login-box label {
+  display: block;
+  text-align: left;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+/* Campos de entrada */
+.login-box input {
+  width: 100%;
+  color: #000;
+  padding: 10px;
+  background-color: white;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+/* Botón */
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  background-color: #7f86d4;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.login-box button:hover {
+  background-color: #6d75be;
+}
+
+/* Links */
+.login-box p {
+  margin-top: 15px;
+  color: #888;
+}
+
+.login-box a {
+  color: #000;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.login-box a:hover {
+  text-decoration: underline;
+}
+
+/* Título superior */
+.title {
+  font-size: 50px;
+  background-color: white;
+  color: #7f86d4;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Logo */
+.milogo-login {
+  height: 100px;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  border-radius: 0%;
+}
+
+/* Estilos responsivos - se agregan al final sin modificar los originales */
+@media (max-width: 1024px) {
+  .login-box {
+    padding: 40px;
+  }
+  
+  .title {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    padding: 20px 0;
+  }
+  
+  .image-container, .login-container {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .image-container {
+    order: 2;
+    padding: 20px 0;
+  }
+  
+  .login-container {
+    order: 1;
+    padding-top: 165px;
+  }
+  
+  .login-image {
+    max-width: 300px;
+  }
+  
+  .login-box {
+    width: 90%;
+    padding: 30px;
+    margin: 0 auto;
+  }
+  
+  .title {
+    font-size: 36px;
+  }
+  
+  .login-box h2 {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-box {
+    padding: 25px 20px;
+    width: 95%;
+  }
+  
+  .title {
+    font-size: 32px;
+  }
+  
+  .login-box h2 {
+    font-size: 18px;
+  }
+  
+  .login-box input {
+    padding: 8px;
+    font-size: 14px;
+  }
+  
+  .login-box button {
+    padding: 10px;
+    font-size: 14px;
+  }
+  
+  .login-box p {
+    font-size: 14px;
+  }
+  
+  /* Ajustes para el captcha en móviles */
+  .captcha-container > div {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+/* ojito */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 40px; /* espacio para el ícono */
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  color: #666;
+  font-size: 1.2rem;
+  height: 60%; /*  centra verticalmente el ojito*/
+}
+
+.toggle-password:hover {
+  color: #333;
+}

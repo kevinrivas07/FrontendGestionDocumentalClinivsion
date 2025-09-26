@@ -1,35 +1,79 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import RegisterAdmin from "./components/RegisterAdmin";
+import Home from "./components/Home";
+import ForgotPassword from "./components/ForgotPassword";
+import ResetPassword from "./components/ResetPassword";
+import AutoLogout from "./components/AutoLogout";
+
+import "./App.css";
+
+// ✅ Funciones fuera del render
+const getTokenPayload = () => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) return null;
+    return JSON.parse(atob(token.split(".")[1]));
+  } catch (err) {
+    return null;
+  }
+};
+
+const isLoggedIn = () => {
+  const payload = getTokenPayload();
+  return !!payload?.userId;
+};
+
+const isAdmin = () => {
+  const payload = getTokenPayload();
+  return payload?.role === "admin";
+};
+
+// ✅ Componente reutilizable para rutas privadas
+const ProtectedRoute = ({ children, adminOnly = false }) => {
+  if (!isLoggedIn()) {
+    return <Navigate to="/login" replace />;
+  }
+  if (adminOnly && !isAdmin()) {
+    return <Navigate to="/home" replace />;
+  }
+  return children;
+};
 
 function App() {
-  const [count, setCount] = useState(0)
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // 🔑 Elimina el token
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <Router>
+      <div className="App">
+        {/* ⏱️ Auto cierre de sesión tras 2 minutos de inactividad */}
+        <AutoLogout onLogout={handleLogout} />
+
+        <Routes>
+          {/* ✅ Redirige / al login */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/register-admin" element={<RegisterAdmin />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </Router>
+  );
 }
 
-export default App
+export default App;

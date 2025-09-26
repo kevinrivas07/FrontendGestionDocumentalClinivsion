@@ -1,0 +1,600 @@
+/* ESTILOS ORIGINALES (se mantienen intactos) */
+/* Estilos generales */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 0;
+  height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 150px; /* Ajuste para evitar que el contenido quede oculto debajo del header */
+}
+
+/* Contenedor principal */
+.max-w-4xl {
+  width: 100%;
+  max-width: 1400px;
+  padding: 40px;
+  height: 100vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.milogo {
+  height: 165px;   /* tamaño reducido */
+  width: auto;    /* mantiene proporción */
+  margin-right: 15px; /* espacio entre logo y texto */
+}
+
+/* Estilo del encabezado */
+header {
+  width: 100%;
+  display: flex;
+   padding: 0 20px 0 0px !important; /* arriba, derecha, abajo, izquierda */
+  align-items: center;
+  background-color: #7f86d4;
+  justify-content: flex-start; /* logo + texto alineados a la izquierda */
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  font-size: 1.2rem;
+  height: 60px;
+  padding: 0 20px;
+  z-index: 1000;
+}
+
+.control {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+
+/* Estilo del calendario */
+.react-calendar {
+  width: 100%;
+  max-width: 700px;
+  border: none; /* Elimina el borde */
+  box-shadow: none; /* Elimina cualquier sombra */
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  margin: auto;
+}
+
+/* Navegación del calendario */
+.react-calendar__navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #7f86d4;
+  color: white;
+  border-radius: 5px;
+  padding: 8px;
+}
+
+.react-calendar__navigation button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.react-calendar__navigation button:hover {
+  color: #0f1ebe;
+}
+
+/* Días de la semana */
+.react-calendar__month-view__weekdays {
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #333;
+  background: #f8f9fa;
+  padding: 5px 0;
+  border-radius: 5px;
+}
+
+/* Celdas de los días */
+.react-calendar__tile {
+  background: #7f86d4;
+  border-radius: 5px;
+  text-align: center;
+  padding: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.react-calendar__tile:hover {
+  background: #f1f1f1;
+  border: 1px solid #007bff;
+}
+
+/* Día seleccionado */
+.react-calendar__tile--active {
+  background: #007bff !important;
+  color: white !important;
+  font-weight: bold;
+  border: 1px solid #0056b3 !important;
+}
+
+/* Día actual resaltado */
+.react-calendar__tile--now {
+  background: #bbbfc09a !important;
+  color: rgb(255, 255, 255) !important;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+/* Días deshabilitados */
+.react-calendar__tile--disabled {
+  color: #808080;
+  background: #f0f0f0;
+  cursor: not-allowed;
+}
+
+/* Días del mes anterior o siguiente (fuera del mes actual) */
+.react-calendar__month-view__days__day--neighboringMonth {
+  color: #fdfdfd80;
+}
+
+/* Fin de semana */
+.react-calendar__month-view__days__day--weekend {
+  color: #fdfdfd80;
+  font-weight: bold;
+}
+
+.recordatorio {
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  margin-top: 15px;
+  color: black;
+  font-size: 1.2rem;
+  height: 50px; /* Ajusta según necesidad */
+}
+
+/* Resumen Médico */
+.resumen-container {
+  background-color: #bfdbfe;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 900px;
+  font-size: 1.3rem;
+}
+
+.resumen-container h2 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  text-align: center;
+  color: black;
+}
+
+.resumen-container p {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Herramientas y Utilidades */
+.titulo-h2 {
+  font-size: 2rem;
+  margin-top: 20px;
+  font-weight: bold;
+  text-align: center;
+  color: black;
+}
+
+.bell-icon {
+  font-size: 35px;
+  color: #fafafa;
+  display: block;
+  margin: 0 auto 10px auto; /* solo espacio inferior, sans margen negativo */
+  filter: drop-shadow(1px 1px 0px #000) 
+          drop-shadow(-1px -1px 0px #000) 
+          drop-shadow(1px -1px 0px #000) 
+          drop-shadow(-2px 2px 0px #000);
+}
+
+.text-2xl {
+  font-size: 24px; /* o el tamaño que desees */
+  color: #000; /* Asegúrate que contraste */
+  text-align: center;
+  margin: 0 auto;
+}
+  
+
+
+/* Contenedor para alinear los botones */
+.button-group {
+  display: flex;
+  gap: 10px;       /* separación entre botones */
+  margin-left: auto; /* empuja todo el grupo hacia la derecha */
+}
+
+/* Botón de perfil */
+.button-profile {
+  padding: 10px;
+  background: #7f86d4;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.button-profile:hover {
+  background: #4c51bf;
+}
+
+/* Botón de cerrar sesión */
+.button-close {
+  padding: 10px;
+  background: #7f86d4;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+
+  /* 🔽 Aquí el tamaño del botón */
+  width: 80px;
+  height: 60px;
+
+  /* Centrar el ícono */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px; /* Hace crecer el ícono si no usas size en FaUserCircle */
+}
+
+/* Hover/Focus */
+.button-close:hover,
+.button-close:focus,
+.button-close:active {
+  background: #6e78e0 !important;
+  color: white !important;
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 900px;
+}
+
+.bg-gray-200 { /* recordatorio */
+  background-color: #e5e7eb;
+  padding: 25px;
+  color: black;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  font-size: 1.5rem;
+}
+
+.bg-gray-200:hover { /* recordatorio difuminado */
+  background-color: #7f86d4;
+  color: white;
+}
+
+.texto { /* seguimiento */
+  background-color: #e5e7eb;
+  padding: 25px;
+  color: black;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  font-size: 1.5rem;
+}
+
+.texto:hover {
+  background-color: #7f86d4;
+  color: white;
+}
+
+/* Imagen de Seguimiento */
+.text-center {
+  text-align: center;
+}
+
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
+img {
+  border-radius: 0.5rem;
+  width: 30rem;
+  max-width: 100%;
+}
+
+/* Resumen Médico  tarjeticas dentro*/
+.resumen-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 900px;
+  font-size: 1.3rem;
+}
+
+
+.resumen-container h2 {
+  font-size: 2.1rem;
+  font-weight: bold;
+  margin-bottom: 16px;
+  color: black;
+  text-align: center;
+}
+
+.resumen-container ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* tarjeticas en grilla */
+  gap: 16px;
+}
+
+.resumen-container li {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 2px solid #3b82f6;
+  padding: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.resumen-container li:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.resumen-container h3 {
+  font-size: 1rem;
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #1e40af; /* azul sobrio */
+}
+
+.resumen-container p {
+  font-size: 0.9rem;
+  color: #4b5563;
+  margin-bottom: 8px;
+}
+
+.resumen-container span {  /* tarjeta hora */
+  font-size: 0.8rem;
+  text-align: center;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.resumen-container li div {  /* tarjeta info frecuencia */
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.button-profile {
+  padding: 10px;
+  background: #7f86d4;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+
+  /* 🔽 Aquí el tamaño del botón */
+  width: 60px;
+  height: 60px;
+
+  /* Centrar el ícono */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px; /* Hace crecer el ícono si no usas size en FaUserCircle */
+}
+
+
+
+/* NUEVOS ESTILOS PARA EL MENÚ HAMBURGUESA (se añaden al final) */
+
+/* Botón hamburguesa (oculto en desktop) */
+.hamburger-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-left: auto;
+  padding: 5px 10px;
+  z-index: 1001;
+}
+
+/* Menú móvil (oculto por defecto) */
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  position: fixed;
+  top: 50px;
+  right: -200px;
+  background: #7f86d4;
+  width: 200px;
+  z-index: 1000;
+  border-radius: 0 0 0 10px;
+  box-shadow: -2px 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: right 0.3s ease;
+}
+
+.mobile-menu-open {
+  right: 0;
+}
+
+.mobile-menu-btn {
+  padding: 15px;
+  background: #7f86d4;
+  color: white;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  font-size: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-menu-btn:hover {
+  background: #6e78e0;
+}
+
+/* Media queries para responsividad */
+@media (max-width: 1024px) {
+  .max-w-4xl {
+    padding: 20px;
+  }
+
+  .control {
+    font-size: 3rem;
+  }
+
+  .react-calendar {
+    max-width: 100%;
+    padding: 30px;
+  }
+}
+
+/* Para tablets y pantallas más pequeñas */
+@media (max-width: 768px) {
+  body {
+    padding-top: 100px;
+  }
+
+  .control {
+    font-size: 2.5rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bg-gray-200, .texto {
+    font-size: 1.2rem;
+    padding: 15px;
+  }
+
+  .resumen-container {
+    font-size: 1rem;
+    padding: 15px;
+  }
+  
+  /* Mostrar botón hamburguesa y ocultar botones normales */
+  .desktop-buttons {
+    display: none !important;
+  }
+  
+  .hamburger-btn {
+    display: block !important;
+  }
+  
+  /* Mostrar menú móvil */
+  .mobile-menu {
+    display: flex !important;
+  }
+}
+
+/* Para móviles */
+@media (max-width: 480px) {
+  body {
+    padding-top: 80px;
+  }
+
+  .control {
+    font-size: 2rem;
+  }
+
+  header {
+    font-size: 1rem;
+    height: 50px;
+  }
+
+  .react-calendar__tile {
+    font-size: 0.8rem;
+    padding: 5px;
+  }
+
+  .recordatorio {
+    font-size: 1rem;
+    height: 40px;
+  }
+
+  .resumen-container h2 {
+    font-size: 1.5rem;
+  }
+
+  img {
+    width: 100%;
+  }
+  
+  .mobile-menu {
+    width: 180px;
+  }
+  
+  .mobile-menu-btn {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Para móviles muy pequeños */
+@media (max-width: 360px) {
+  .control {
+    font-size: 1.7rem;
+  }
+  
+  .mobile-menu {
+    width: 160px;
+  }
+  
+  .mobile-menu-btn {
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Para dispositivos con altura muy pequeña */
+@media (max-height: 600px) {
+  body {
+    padding-top: 90px;
+  }
+  
+  .max-w-4xl {
+    padding: 15px;
+  }
+  
+  .mobile-menu {
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+}
