@@ -6,6 +6,7 @@ import Home from "./components/Home";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
 import AutoLogout from "./components/AutoLogout";
+import AsistenciaForm from "./components/AsistenciaForm";
 
 import "./App.css";
 
@@ -61,7 +62,7 @@ function App() {
           <Route path="/register-admin" element={<RegisterAdmin />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
-
+          <Route path="/asistencia" element={<AsistenciaForm />} />
           <Route
             path="/home"
             element={
