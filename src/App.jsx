@@ -7,10 +7,11 @@ import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
 import AutoLogout from "./components/AutoLogout";
 import AsistenciaForm from "./components/AsistenciaForm";
+import AsistenciaList from "./components/AsistenciaList";
 
 import "./App.css";
 
-// ✅ Funciones fuera del render
+// 🔑 Helpers
 const getTokenPayload = () => {
   try {
     const token = localStorage.getItem("token");
@@ -31,7 +32,7 @@ const isAdmin = () => {
   return payload?.role === "admin";
 };
 
-// ✅ Componente reutilizable para rutas privadas
+// 🔒 Rutas protegidas
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   if (!isLoggedIn()) {
     return <Navigate to="/login" replace />;
@@ -44,13 +45,13 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
 
 function App() {
   const handleLogout = () => {
-    localStorage.removeItem("token"); // 🔑 Elimina el token
+    localStorage.removeItem("token");
   };
 
   return (
     <Router>
       <div className="App">
-        {/* ⏱️ Auto cierre de sesión tras 2 minutos de inactividad */}
+        {/* ⏱️ Auto cierre de sesión tras inactividad */}
         <AutoLogout onLogout={handleLogout} />
 
         <Routes>
@@ -62,7 +63,26 @@ function App() {
           <Route path="/register-admin" element={<RegisterAdmin />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
-          <Route path="/asistencia" element={<AsistenciaForm />} />
+
+          {/* 📋 Asistencia */}
+          <Route
+            path="/asistencia"
+            element={
+              <ProtectedRoute>
+                <AsistenciaForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/asistencias"
+            element={
+              <ProtectedRoute>
+                <AsistenciaList />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* 🏠 Home */}
           <Route
             path="/home"
             element={
