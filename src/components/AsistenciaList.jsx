@@ -1,8 +1,11 @@
 // src/components/AsistenciaList.jsx
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "../styles/AsistenciaList.css";
 
 export default function AsistenciaList() {
+  const navigate = useNavigate();
   const [asistencias, setAsistencias] = useState([]);
 
   useEffect(() => {
@@ -35,22 +38,27 @@ export default function AsistenciaList() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="alist-wrap">
+      <img src={new URL("../assets/vision.jpg", import.meta.url).href} alt="Clínica de la Visión" className="home-hero-img" />
       <h2>📂 Asistencias Guardadas</h2>
       {asistencias.length === 0 ? (
-        <p>No hay registros guardados</p>
+        <p className="alist-empty">No hay registros guardados</p>
       ) : (
-        <ul>
+        <ul className="alist-list">
           {asistencias.map((a) => (
-            <li key={a._id} style={{ margin: "10px 0" }}>
-              <strong>{a.tema}</strong> — {a.fecha}
-              <button onClick={() => descargarPDF(a._id)} style={{ marginLeft: "10px" }}>
+            <li key={a._id} className="alist-item">
+              <div className="alist-info">
+                <strong className="alist-topic">{a.tema}</strong>
+                <span className="alist-date">{a.fecha}</span>
+              </div>
+              <button className="download-btn" onClick={() => descargarPDF(a._id)}>
                 ⬇️ Descargar PDF
               </button>
             </li>
           ))}
         </ul>
       )}
+      <button className="back" type="button" onClick={() => navigate("/")}>Volver</button>
     </div>
   );
 }

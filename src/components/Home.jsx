@@ -23,9 +23,11 @@ const Home = () => {
     <div className="home-container">
       {/* Contenido principal */}
       <main className="main-content">
-        <h2 className="sidebar-title">👁 Clínica de la Visión del Valle</h2>
+        <img src={new URL("../assets/vision.jpg", import.meta.url).href} alt="Clínica de la Visión" className="home-hero-img" />
+        
         <h1 className="welcome-title">Hola {nombreUsuario || "bienvenido"}</h1>
         <p className="welcome-subtitle">Formatos</p>
+        
 
         <div className="quick-access">
           {/* Registrar nueva lista de asistencia */}

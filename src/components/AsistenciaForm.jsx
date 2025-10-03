@@ -1,10 +1,11 @@
-// src/components/AsistenciaForm.jsx
 import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import SignatureCanvas from "react-signature-canvas";
 import axios from "axios";
 import "../styles/AsistenciaForm.css"; // te doy estilos abajo
 
 export default function AsistenciaForm() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     fecha: "",
     tema: "",
@@ -88,6 +89,7 @@ export default function AsistenciaForm() {
 
   return (
     <div className="asistencia-wrap">
+       <img src={new URL("../assets/vision.jpg", import.meta.url).href} alt="Clínica de la Visión" className="home-img" />
       <h2>📋 Lista de Asistencia</h2>
 
       <form onSubmit={handleSubmit} className="asistencia-form">
@@ -136,6 +138,7 @@ export default function AsistenciaForm() {
         <div className="controls">
           <button type="button" onClick={addAsistente}>➕ Agregar asistente</button>
           <button type="submit">Generar PDF</button>
+           <button type="button" className="back-btn" onClick={() => navigate("/")}>Volver</button>
         </div>
       </form>
 
