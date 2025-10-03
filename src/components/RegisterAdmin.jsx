@@ -37,31 +37,42 @@ const RegisterAdmin = () => {
     };
 
     return (
-        <div>
-            <h2>Registro de Administrador</h2>
-            {/* Formulario de registro */}
-            <form onSubmit={handleRegister}>
-                <input
-                    type="text"
-                    placeholder="Correo electrónico"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                />
-                <input
-                    type="password"
-                    placeholder="Contraseña"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <button type="submit">Registrar</button>
-            </form>
+        <div className="register-admin-wrap">
+            <div className="register-admin-container">
+                <h2>👨‍💼 Registro de Administrador</h2>
+                
+                <form onSubmit={handleRegister} className="register-form">
+                    <div className="input-group">
+                        <input
+                            type="email"
+                            placeholder="Correo electrónico"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                            className="form-input"
+                        />
+                    </div>
+                    
+                    <div className="input-group">
+                        <input
+                            type="password"
+                            placeholder="Contraseña"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            className="form-input"
+                        />
+                    </div>
+                    
+                    <button type="submit" className="register-btn">
+                        Registrar Administrador
+                    </button>
+                </form>
 
-            {/* Botón de salida */}
-            <button onClick={handleLogout} style={{ marginTop: '10px', backgroundColor: 'red', color: 'white' }}>
-                Salir
-            </button>
+                <button onClick={handleLogout} className="logout-btn">
+                    ← Volver al Login
+                </button>
+            </div>
         </div>
     );
 };

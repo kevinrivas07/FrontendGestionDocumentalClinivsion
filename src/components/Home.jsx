@@ -7,6 +7,7 @@ import {
   FaSearch,
   FaPlus,
   FaClipboardList,
+  FaSignOutAlt,
 } from "react-icons/fa";
 import "../styles/Home.css";
 
@@ -18,6 +19,12 @@ const Home = () => {
     const nombre = localStorage.getItem("nombre");
     if (nombre) setNombreUsuario(nombre);
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("nombre");
+    navigate("/login");
+  };
 
   return (
     <div className="home-container">
@@ -42,6 +49,11 @@ const Home = () => {
             <p>📂 Ver Asistencias Guardadas</p>
           </div>
         </div>
+
+        <button className="logout-btn" onClick={handleLogout}>
+          <FaSignOutAlt size={16} />
+          Cerrar Sesión
+        </button>
       </main>
     </div>
   );

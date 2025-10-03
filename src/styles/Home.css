@@ -175,6 +175,33 @@
   margin: 0;
 }
 
+/* 🚪 Botón cerrar sesión */
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 24px auto 0;
+  padding: 12px 20px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: linear-gradient(#ffffff, #ffffff) padding-box,
+    linear-gradient(135deg, rgba(239, 68, 68, 0.7), rgba(220, 38, 38, 0.7)) border-box;
+  color: #1a202c;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+  font-size: 14px;
+}
+
+.logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(239, 68, 68, 0.2);
+}
+
+.logout-btn:active {
+  transform: translateY(0);
+}
+
 /* 🎞️ Animaciones */
 @keyframes fadeInUp {
   from {

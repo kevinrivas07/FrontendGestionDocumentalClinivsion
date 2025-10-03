@@ -8,6 +8,7 @@ import ResetPassword from "./components/ResetPassword";
 import AutoLogout from "./components/AutoLogout";
 import AsistenciaForm from "./components/AsistenciaForm";
 import AsistenciaList from "./components/AsistenciaList";
+import AdminUpload from "./components/AdminUpload";
 
 import "./App.css";
 
@@ -88,6 +89,16 @@ function App() {
             element={
               <ProtectedRoute>
                 <Home />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* 👨‍💼 Admin */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute adminOnly={true}>
+                <AdminUpload />
               </ProtectedRoute>
             }
           />

@@ -1,49 +1,220 @@
-/* src/components/RegisterAdmin.css */
+/* 🌐 Contenedor principal */
+.register-admin-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  min-height: 100vh;
+  background: radial-gradient(40vmax 40vmax at 30% 20%, rgba(99, 179, 237, 0.12), transparent),
+    radial-gradient(35vmax 35vmax at 70% 80%, rgba(72, 187, 120, 0.12), transparent);
+  background-attachment: fixed;
+  animation: bgFloat 16s ease-in-out infinite;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.register-admin-wrap::before {
+  content: "";
+  position: fixed;
+  inset: -20vmax;
+  background: radial-gradient(40vmax 40vmax at 30% 20%, rgba(99, 179, 237, 0.12), transparent),
+    radial-gradient(35vmax 35vmax at 70% 80%, rgba(72, 187, 120, 0.12), transparent);
+  filter: blur(20px);
+  z-index: -1;
+  animation: glowDrift 22s ease-in-out infinite alternate;
+}
+
+/* 📌 Contenedor del formulario */
 .register-admin-container {
-    max-width: 400px;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: saturate(120%) blur(10px);
+  -webkit-backdrop-filter: saturate(120%) blur(10px);
+  padding: 2.5rem 3rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 10px 28px rgba(2, 8, 23, 0.12), 0 2px 6px rgba(2, 8, 23, 0.06);
+  max-width: 480px;
+  width: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: fadeInUp 600ms ease-out both;
 }
 
-h2 {
-    text-align: center;
+.register-admin-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(2, 8, 23, 0.16), 0 4px 10px rgba(2, 8, 23, 0.08);
 }
 
-form {
-    display: flex;
-    flex-direction: column;
+/* 🏥 Título */
+.register-admin-container h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  background: linear-gradient(90deg, #1a202c, #2b6cb0, #2f855a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 0 0 2rem;
+  text-align: center;
+  position: relative;
 }
 
-div {
-    margin-bottom: 15px;
+.register-admin-container h2::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -10px;
+  width: 80px;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #4299e1, #48bb78);
 }
 
-label {
-    margin-bottom: 5px;
+/* 📝 Formulario */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
-input {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-button {
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+.form-input {
+  padding: 14px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #1a202c;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.08s ease;
 }
 
-button:hover {
-    background-color: #45a049;
+.form-input:focus {
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.25);
+  transform: translateY(-1px);
 }
 
-.error-message {
-    color: red;
-    text-align: center;
+.form-input:hover {
+  border-color: #cbd5e0;
+}
+
+.form-input::placeholder {
+  color: #a0aec0;
+  font-weight: 500;
+}
+
+/* 🔘 Botones */
+.register-btn {
+  padding: 14px 24px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: linear-gradient(#ffffff, #ffffff) padding-box,
+    linear-gradient(135deg, rgba(66, 153, 225, 0.7), rgba(72, 187, 120, 0.7)) border-box;
+  color: #1a202c;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+  margin-top: 0.5rem;
+}
+
+.register-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+.register-btn:active {
+  transform: translateY(0);
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 20px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: linear-gradient(#ffffff, #ffffff) padding-box,
+    linear-gradient(135deg, rgba(239, 68, 68, 0.7), rgba(220, 38, 38, 0.7)) border-box;
+  color: #1a202c;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+  font-size: 14px;
+}
+
+.logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(239, 68, 68, 0.2);
+}
+
+.logout-btn:active {
+  transform: translateY(0);
+}
+
+/* 🎞️ Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bgFloat {
+  0% {
+    background-position: 0% 50%, 100% 50%, 0% 0%;
+  }
+  50% {
+    background-position: 50% 50%, 50% 50%, 100% 100%;
+  }
+  100% {
+    background-position: 0% 50%, 100% 50%, 0% 0%;
+  }
+}
+
+@keyframes glowDrift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(2%, -2%, 0) scale(1.04);
+  }
+}
+
+/* ♿ Accesibilidad: respeta usuarios con "reduced motion" */
+@media (prefers-reduced-motion: reduce) {
+  .register-admin-wrap,
+  .register-admin-wrap::before,
+  .register-admin-container {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* 📱 Responsive */
+@media (max-width: 640px) {
+  .register-admin-wrap {
+    padding: 1rem;
+  }
+  
+  .register-admin-container {
+    padding: 1.5rem 2rem;
+    max-width: 100%;
+  }
+  
+  .register-admin-container h2 {
+    font-size: 1.8rem;
+  }
 }
