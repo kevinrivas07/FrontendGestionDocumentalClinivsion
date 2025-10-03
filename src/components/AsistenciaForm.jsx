@@ -1,7 +1,10 @@
-import { useState } from "react";
+// src/components/AsistenciaForm.jsx
+import React, { useRef, useState } from "react";
+import SignatureCanvas from "react-signature-canvas";
 import axios from "axios";
+import "../styles/AsistenciaForm.css"; // te doy estilos abajo
 
-const AsistenciaForm = () => {
+export default function AsistenciaForm() {
   const [form, setForm] = useState({
     fecha: "",
     tema: "",
@@ -11,87 +14,149 @@ const AsistenciaForm = () => {
     sede: "",
     horaInicio: "",
     horaFin: "",
-    asistentes: [{ nombre: "", cargo: "" }],
+    asistentes: [{ nombre: "", cargo: "", firma: "" }],
   });
+
+  const [sigOpenIndex, setSigOpenIndex] = useState(null); // índice activo para firmar
+  const sigPadRef = useRef(null);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleAsistenteChange = (i, e) => {
-    const newAsistentes = [...form.asistentes];
-    newAsistentes[i][e.target.name] = e.target.value;
-    setForm({ ...form, asistentes: newAsistentes });
+    const newAs = [...form.asistentes];
+    newAs[i][e.target.name] = e.target.value;
+    setForm({ ...form, asistentes: newAs });
   };
 
   const addAsistente = () => {
     if (form.asistentes.length < 25) {
       setForm({
         ...form,
-        asistentes: [...form.asistentes, { nombre: "", cargo: "" }],
+        asistentes: [...form.asistentes, { nombre: "", cargo: "", firma: "" }],
       });
     }
+  };
+
+  const removeAsistente = (i) => {
+    const newAs = form.asistentes.filter((_, idx) => idx !== i);
+    setForm({ ...form, asistentes: newAs });
+  };
+
+  // abrir modal/área de firma para el índice i
+  const openFirma = (i) => {
+    setSigOpenIndex(i);
+    // deja el canvas listo (se renderiza condicionalmente)
+  };
+
+  const clearFirma = () => {
+    if (sigPadRef.current) sigPadRef.current.clear();
+  };
+
+  const saveFirma = () => {
+    if (!sigPadRef.current) return;
+    const dataURL = sigPadRef.current.toDataURL("image/png"); // base64 string
+    const newAs = [...form.asistentes];
+    newAs[sigOpenIndex].firma = dataURL;
+    setForm({ ...form, asistentes: newAs });
+    setSigOpenIndex(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // aumenta el limite si tus firmas son grandes (será manejado en backend también)
       const res = await axios.post("http://localhost:5000/api/asistencia", form, {
-        responseType: "blob", // recibimos PDF
+        responseType: "blob",
+        headers: { "Content-Type": "application/json" },
       });
 
-      // Descargar PDF generado
-      const url = window.URL.createObjectURL(new Blob([res.data]));
+      // descarga PDF
+      const url = window.URL.createObjectURL(new Blob([res.data], { type: "application/pdf" }));
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", "Lista_Asistencia.pdf");
       document.body.appendChild(link);
       link.click();
+      link.remove();
     } catch (err) {
       console.error("❌ Error al generar PDF:", err);
+      alert("Error al generar PDF. Revisa consola.");
     }
   };
 
   return (
-    <div className="form-container">
+    <div className="asistencia-wrap">
       <h2>📋 Lista de Asistencia</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="date" name="fecha" value={form.fecha} onChange={handleChange} required />
-        <input type="text" name="tema" placeholder="Tema" value={form.tema} onChange={handleChange} required />
-        <input type="text" name="responsable" placeholder="Responsable" value={form.responsable} onChange={handleChange} required />
-        <input type="text" name="cargo" placeholder="Cargo" value={form.cargo} onChange={handleChange} />
-        <input type="text" name="modalidad" placeholder="Modalidad" value={form.modalidad} onChange={handleChange} />
-        <input type="text" name="sede" placeholder="Sede" value={form.sede} onChange={handleChange} />
-        <input type="time" name="horaInicio" value={form.horaInicio} onChange={handleChange} />
-        <input type="time" name="horaFin" value={form.horaFin} onChange={handleChange} />
+
+      <form onSubmit={handleSubmit} className="asistencia-form">
+        <div className="fila-datos">
+          <input type="date" name="fecha" value={form.fecha} onChange={handleChange} required />
+          <input type="text" name="tema" placeholder="Tema" value={form.tema} onChange={handleChange} required />
+          <input type="text" name="responsable" placeholder="Responsable" value={form.responsable} onChange={handleChange} required />
+          <input type="text" name="cargo" placeholder="Cargo" value={form.cargo} onChange={handleChange} />
+          <input type="text" name="modalidad" placeholder="Modalidad" value={form.modalidad} onChange={handleChange} />
+          <input type="text" name="sede" placeholder="Sede" value={form.sede} onChange={handleChange} />
+          <input type="time" name="horaInicio" value={form.horaInicio} onChange={handleChange} />
+          <input type="time" name="horaFin" value={form.horaFin} onChange={handleChange} />
+        </div>
 
         <h3>👥 Asistentes</h3>
-        {form.asistentes.map((a, i) => (
-          <div key={i} className="asistente">
-            <input
-              type="text"
-              name="nombre"
-              placeholder="Nombre completo"
-              value={a.nombre}
-              onChange={(e) => handleAsistenteChange(i, e)}
-            />
-            <input
-              type="text"
-              name="cargo"
-              placeholder="Cargo"
-              value={a.cargo}
-              onChange={(e) => handleAsistenteChange(i, e)}
-            />
-          </div>
-        ))}
-        <button type="button" onClick={addAsistente}>
-          ➕ Agregar Asistente
-        </button>
+        <div className="asistentes-list">
+          {form.asistentes.map((a, i) => (
+            <div className="asistente-row" key={i}>
+              <div className="cols">
+                <span className="num">{i + 1}</span>
+                <input name="nombre" placeholder="Nombre completo" value={a.nombre} onChange={(e) => handleAsistenteChange(i, e)} />
+                <input name="cargo" placeholder="Cargo" value={a.cargo} onChange={(e) => handleAsistenteChange(i, e)} />
+              </div>
 
-        <button type="submit">Generar PDF</button>
+              <div className="firma-controls">
+                {a.firma ? (
+                  <img src={a.firma} alt={`firma-${i}`} className="firma-preview" />
+                ) : (
+                  <div className="firma-placeholder">sin firma</div>
+                )}
+
+                <div className="f-buttons">
+                  <button type="button" onClick={() => openFirma(i)}>Firmar</button>
+                  <button type="button" onClick={() => {
+                    const newAs = [...form.asistentes];
+                    newAs[i].firma = "";
+                    setForm({ ...form, asistentes: newAs });
+                  }}>Borrar firma</button>
+                  <button type="button" onClick={() => removeAsistente(i)}>Eliminar</button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="controls">
+          <button type="button" onClick={addAsistente}>➕ Agregar asistente</button>
+          <button type="submit">Generar PDF</button>
+        </div>
       </form>
+
+      {/* Modal / área de firma — se muestra solo si sigOpenIndex !== null */}
+      {sigOpenIndex !== null && (
+        <div className="firma-modal">
+          <div className="firma-box">
+            <h4>Firma: asistente {sigOpenIndex + 1}</h4>
+            <SignatureCanvas
+              ref={sigPadRef}
+              penColor="black"
+              canvasProps={{ width: 400, height: 120, className: "sigCanvas" }}
+            />
+            <div className="modal-controls">
+              <button onClick={clearFirma} type="button">Borrar</button>
+              <button onClick={saveFirma} type="button">Guardar firma</button>
+              <button onClick={() => setSigOpenIndex(null)} type="button">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-};
-
-export default AsistenciaForm;
+}

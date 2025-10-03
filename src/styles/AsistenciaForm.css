@@ -1,0 +1,13 @@
+.asistencia-wrap { padding: 18px; max-width:900px; margin:0 auto; font-family: Arial, sans-serif; }
+.fila-datos input { margin:6px 6px 6px 0; padding:6px; }
+.asistentes-list { margin-top: 12px; }
+.asistente-row { display:flex; align-items:center; gap:12px; padding:6px 0; border-bottom: 1px solid #eee; }
+.asistente-row .cols { display:flex; gap:8px; align-items:center; flex:1; }
+.asistente-row input { padding:6px; }
+.firma-preview { width:120px; height:40px; object-fit:contain; border:1px solid #ddd; }
+.firma-placeholder { width:120px; height:40px; display:flex; align-items:center; justify-content:center; color:#666; border:1px dashed #ddd; }
+.f-buttons button { margin-left:6px; }
+.controls { margin-top:12px; display:flex; gap:8px; }
+.firma-modal { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.4); }
+.firma-box { background:#fff; padding:16px; border-radius:6px; box-shadow:0 6px 20px rgba(0,0,0,0.2); }
+.sigCanvas { border:1px solid #ccc; }
