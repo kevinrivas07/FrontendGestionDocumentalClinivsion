@@ -4,9 +4,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; 
 import "../styles/Login.css";
 
-
 const API_URL = "http://localhost:5000/api";
-
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -15,11 +13,9 @@ function Login() {
   const [captchaToken, setCaptchaToken] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-
-  // 👇 Referencia al captcha
   const captchaRef = useRef(null);
 
-  // Fondo de login
+  // 👇 Aplica el fondo del login
   useEffect(() => {
     document.body.classList.add("login-background");
     return () => {
@@ -27,34 +23,36 @@ function Login() {
     };
   }, []);
 
-  // Verificar token existente
+  // 👇 Si ya hay sesión activa, redirige según el rol
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
+    const role = localStorage.getItem("role");
+
+    if (token && role) {
       try {
         const payload = JSON.parse(atob(token.split(".")[1]));
         if (payload?.userId) {
-          navigate("/home", { replace: true });
+          if (role === "admin") {
+            navigate("/admin/dashboard", { replace: true });
+          } else {
+            navigate("/home", { replace: true });
+          }
         } else {
-          localStorage.removeItem("token");
-          localStorage.removeItem("role");
-          localStorage.removeItem("nombre");
+          localStorage.clear();
         }
-      } catch (err) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
-        localStorage.removeItem("nombre");
-        console.warn("⚠️ Token inválido en el localStorage");
+      } catch {
+        localStorage.clear();
+        console.warn("⚠️ Token inválido o dañado.");
       }
     }
   }, [navigate]);
 
+  // 👇 Manejo del login
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
 
     try {
-      // 👇 Aquí agrego /login al endpoint
       const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -65,19 +63,16 @@ function Login() {
 
       if (response.ok) {
         try {
+          // Decodificar token
           const payload = JSON.parse(atob(data.token.split(".")[1]));
           if (!payload.userId) throw new Error("Token sin userId");
 
+          // Guardar datos en localStorage
           localStorage.setItem("token", data.token);
           localStorage.setItem("role", data.role);
+          localStorage.setItem("nombre", data.user?.nombre || username);
 
-          // 👇 Guardamos el nombre si viene en la respuesta
-          if (data.user?.nombre) {
-            localStorage.setItem("nombre", data.user.nombre);
-          } else {
-            console.warn("⚠️ El backend no envió el nombre del usuario");
-          }
-
+          // Redirigir según el rol
           if (data.role === "admin") {
             navigate("/admin/dashboard", { replace: true });
           } else {
@@ -86,18 +81,18 @@ function Login() {
         } catch (err) {
           console.error("❌ Token mal formado:", err.message);
           setError("Error al procesar el token de sesión.");
-          captchaRef.current.reset();
+          captchaRef.current?.reset();
           setCaptchaToken(null);
         }
       } else {
         setError(data.msg || "Credenciales incorrectas.");
-        captchaRef.current.reset();
+        captchaRef.current?.reset();
         setCaptchaToken(null);
       }
     } catch (err) {
       console.error("❌ Error de conexión:", err.message);
       setError("No se pudo conectar con el servidor.");
-      captchaRef.current.reset();
+      captchaRef.current?.reset();
       setCaptchaToken(null);
     }
   };
@@ -105,13 +100,11 @@ function Login() {
   return (
     <div className="main-container">
       {/* Columna izquierda - Imagen */}
-      <div className="image-container">
-      </div>
+      <div className="image-container"></div>
 
       {/* Columna derecha - Login */}
       <div className="login-container">
         <div className="login-box">
-        
           <h2>INICIO DE SESIÓN</h2>
           <form onSubmit={handleLogin}>
             <div className="input-group">
@@ -144,6 +137,15 @@ function Login() {
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </span>
               </div>
+            </div>
+
+            {/* 🔹 ReCAPTCHA */}
+            <div className="captcha-container">
+              <ReCAPTCHA
+                ref={captchaRef}
+                sitekey="6LeW0LErAAAAAIKalgvz2LKBAHMue_GpxaFF8LpS"
+                onChange={setCaptchaToken}
+              />
             </div>
 
             <button type="submit">Iniciar Sesión</button>

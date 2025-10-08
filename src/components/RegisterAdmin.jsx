@@ -3,78 +3,80 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/RegisterAdmin.css';
 
 const RegisterAdmin = () => {
-    const navigate = useNavigate();
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    nombre: '',
+    ciudad: '',
+    cedula: '',
+    fecha: '',
+    phone: '',
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
 
-    const handleRegister = async (e) => {
-        e.preventDefault();
-        
-        try {
-            const response = await fetch('http://localhost:5000/api/admin/register-admin', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password }),
-            });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-            const data = await response.json();
-            if (response.ok) {
-                alert('Administrador registrado con éxito');
-                navigate('/'); // Redirige al login después del registro exitoso
-            } else {
-                alert(`Error: ${data.message}`);
-            }
-        } catch (error) {
-            console.error('Error en el registro:', error);
-            alert('Hubo un problema con el registro del administrador');
-        }
-    };
+  const handleRegister = async (e) => {
+    e.preventDefault();
 
-    const handleLogout = () => {
+    if (formData.password !== formData.confirmPassword) {
+      alert('Las contraseñas no coinciden');
+      return;
+    }
+
+    try {
+      const { confirmPassword, ...dataToSend } = formData; // 👈 Eliminamos el campo innecesario
+
+      const response = await fetch('http://localhost:5000/api/register-admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataToSend)
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert('Administrador registrado con éxito');
         navigate('/'); // Redirige al login
-    };
+      } else {
+        alert(`Error: ${data.msg || 'No se pudo registrar el administrador'}`);
+      }
+    } catch (error) {
+      console.error('Error en el registro:', error);
+      alert('Hubo un problema con el registro del administrador');
+    }
+  };
 
-    return (
-        <div className="register-admin-wrap">
-            <div className="register-admin-container">
-                <h2>👨‍💼 Registro de Administrador</h2>
-                
-                <form onSubmit={handleRegister} className="register-form">
-                    <div className="input-group">
-                        <input
-                            type="email"
-                            placeholder="Correo electrónico"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            required
-                            className="form-input"
-                        />
-                    </div>
-                    
-                    <div className="input-group">
-                        <input
-                            type="password"
-                            placeholder="Contraseña"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            className="form-input"
-                        />
-                    </div>
-                    
-                    <button type="submit" className="register-btn">
-                        Registrar Administrador
-                    </button>
-                </form>
+  const handleLogout = () => {
+    navigate('/');
+  };
 
-                <button onClick={handleLogout} className="logout-btn">
-                    ← Volver al Login
-                </button>
-            </div>
-        </div>
-    );
+  return (
+    <div className="register-admin-wrap">
+      <div className="register-admin-container">
+        <h2>👨‍💼 Registro de Administrador</h2>
+
+        <form onSubmit={handleRegister} className="register-form">
+          <input type="text" name="nombre" placeholder="Nombre completo" value={formData.nombre} onChange={handleChange} required />
+          <input type="text" name="ciudad" placeholder="Ciudad" value={formData.ciudad} onChange={handleChange} required />
+          <input type="text" name="cedula" placeholder="Cédula" value={formData.cedula} onChange={handleChange} required />
+          <input type="date" name="fecha" value={formData.fecha} onChange={handleChange} required />
+          <input type="text" name="phone" placeholder="Teléfono" value={formData.phone} onChange={handleChange} required />
+          <input type="text" name="username" placeholder="Usuario" value={formData.username} onChange={handleChange} required />
+          <input type="email" name="email" placeholder="Correo electrónico" value={formData.email} onChange={handleChange} required />
+          <input type="password" name="password" placeholder="Contraseña" value={formData.password} onChange={handleChange} required />
+          <input type="password" name="confirmPassword" placeholder="Confirmar contraseña" value={formData.confirmPassword} onChange={handleChange} required />
+
+          <button type="submit" className="register-btn">Registrar Administrador</button>
+        </form>
+
+        <button onClick={handleLogout} className="logout-btn">← Volver al Login</button>
+      </div>
+    </div>
+  );
 };
 
 export default RegisterAdmin;
