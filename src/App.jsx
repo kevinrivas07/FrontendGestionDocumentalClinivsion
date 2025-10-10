@@ -9,6 +9,7 @@ import AutoLogout from "./components/AutoLogout";
 import AsistenciaForm from "./components/AsistenciaForm";
 import AsistenciaList from "./components/AsistenciaList";
 import AdminUpload from "./components/AdminUpload";
+import AdminDashboard from "./components/AdminDashboard"; // ✅ corregido el import (ahora sí con "d")
 
 import "./App.css";
 
@@ -18,7 +19,7 @@ const getTokenPayload = () => {
     const token = localStorage.getItem("token");
     if (!token) return null;
     return JSON.parse(atob(token.split(".")[1]));
-  } catch (err) {
+  } catch {
     return null;
   }
 };
@@ -35,35 +36,51 @@ const isAdmin = () => {
 
 // 🔒 Rutas protegidas
 const ProtectedRoute = ({ children, adminOnly = false }) => {
-  if (!isLoggedIn()) {
-    return <Navigate to="/login" replace />;
-  }
-  if (adminOnly && !isAdmin()) {
-    return <Navigate to="/home" replace />;
-  }
+  if (!isLoggedIn()) return <Navigate to="/login" replace />;
+  if (adminOnly && !isAdmin()) return <Navigate to="/home" replace />;
   return children;
 };
 
 function App() {
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    window.location.href = "/login";
   };
 
   return (
     <Router>
       <div className="App">
-        {/* ⏱️ Auto cierre de sesión tras inactividad */}
         <AutoLogout onLogout={handleLogout} />
 
         <Routes>
-          {/* ✅ Redirige / al login */}
+          {/* 🏠 Raíz: siempre va al login */}
           <Route path="/" element={<Navigate to="/login" replace />} />
 
+          {/* 🔐 Autenticación */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/register-admin" element={<RegisterAdmin />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
+
+          {/* 👨‍💼 Panel de administrador */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute adminOnly={true}>
+                <AdminDashboard onLogout={handleLogout} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute adminOnly={true}>
+                <AdminUpload />
+              </ProtectedRoute>
+            }
+          />
 
           {/* 📋 Asistencia */}
           <Route
@@ -83,22 +100,12 @@ function App() {
             }
           />
 
-          {/* 🏠 Home */}
+          {/* 🏡 Vista usuario */}
           <Route
             path="/home"
             element={
               <ProtectedRoute>
                 <Home />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* 👨‍💼 Admin */}
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute adminOnly={true}>
-                <AdminUpload />
               </ProtectedRoute>
             }
           />
