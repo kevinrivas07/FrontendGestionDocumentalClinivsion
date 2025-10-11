@@ -1,11 +1,22 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SignatureCanvas from "react-signature-canvas";
 import axios from "axios";
-import "../styles/AsistenciaForm.css"; // te doy estilos abajo
+import "../styles/AsistenciaForm.css";
 
 export default function AsistenciaForm() {
   const navigate = useNavigate();
+  const sigPadRef = useRef(null);
+
+  // 🔒 Verificar si hay token
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Debes iniciar sesión para registrar asistencias");
+      navigate("/login");
+    }
+  }, [navigate]);
+
   const [form, setForm] = useState({
     fecha: "",
     tema: "",
@@ -18,8 +29,7 @@ export default function AsistenciaForm() {
     asistentes: [{ nombre: "", cargo: "", firma: "" }],
   });
 
-  const [sigOpenIndex, setSigOpenIndex] = useState(null); // índice activo para firmar
-  const sigPadRef = useRef(null);
+  const [sigOpenIndex, setSigOpenIndex] = useState(null);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -45,10 +55,8 @@ export default function AsistenciaForm() {
     setForm({ ...form, asistentes: newAs });
   };
 
-  // abrir modal/área de firma para el índice i
   const openFirma = (i) => {
     setSigOpenIndex(i);
-    // deja el canvas listo (se renderiza condicionalmente)
   };
 
   const clearFirma = () => {
@@ -57,23 +65,33 @@ export default function AsistenciaForm() {
 
   const saveFirma = () => {
     if (!sigPadRef.current) return;
-    const dataURL = sigPadRef.current.toDataURL("image/png"); // base64 string
+    const dataURL = sigPadRef.current.toDataURL("image/png");
     const newAs = [...form.asistentes];
     newAs[sigOpenIndex].firma = dataURL;
     setForm({ ...form, asistentes: newAs });
     setSigOpenIndex(null);
   };
 
+  // ✅ Envío del formulario con token JWT
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // aumenta el limite si tus firmas son grandes (será manejado en backend también)
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Sesión expirada. Vuelve a iniciar sesión.");
+        navigate("/login");
+        return;
+      }
+
       const res = await axios.post("http://localhost:5000/api/asistencia", form, {
         responseType: "blob",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      // descarga PDF
+      // 📄 Descargar PDF
       const url = window.URL.createObjectURL(new Blob([res.data], { type: "application/pdf" }));
       const link = document.createElement("a");
       link.href = url;
@@ -81,15 +99,28 @@ export default function AsistenciaForm() {
       document.body.appendChild(link);
       link.click();
       link.remove();
+
+      alert("✅ Asistencia registrada correctamente.");
+      navigate("/admin/dashboard");
     } catch (err) {
       console.error("❌ Error al generar PDF:", err);
-      alert("Error al generar PDF. Revisa consola.");
+      if (err.response?.status === 401) {
+        alert("No autorizado. Por favor, inicia sesión nuevamente.");
+        localStorage.removeItem("token");
+        navigate("/login");
+      } else {
+        alert("Error al generar PDF. Revisa consola.");
+      }
     }
   };
 
   return (
     <div className="asistencia-wrap">
-       <img src={new URL("../assets/vision.jpg", import.meta.url).href} alt="Clínica de la Visión" className="home-img" />
+      <img
+        src={new URL("../assets/vision.jpg", import.meta.url).href}
+        alt="Clínica de la Visión"
+        className="home-img"
+      />
       <h2>📋 Lista de Asistencia</h2>
 
       <form onSubmit={handleSubmit} className="asistencia-form">
@@ -138,11 +169,10 @@ export default function AsistenciaForm() {
         <div className="controls">
           <button type="button" onClick={addAsistente}>➕ Agregar asistente</button>
           <button type="submit">Generar PDF</button>
-           <button type="button" className="back-btn" onClick={() => navigate("/")}>Volver</button>
+          <button type="button" className="back-btn" onClick={() => navigate("/")}>Volver</button>
         </div>
       </form>
 
-      {/* Modal / área de firma — se muestra solo si sigOpenIndex !== null */}
       {sigOpenIndex !== null && (
         <div className="firma-modal">
           <div className="firma-box">

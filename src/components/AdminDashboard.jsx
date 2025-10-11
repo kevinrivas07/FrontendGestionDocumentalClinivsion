@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [asistencias, setAsistencias] = useState([]);
   const [newUser, setNewUser] = useState({
@@ -9,8 +12,9 @@ const AdminDashboard = () => {
     password: "",
     role: "user",
   });
+  const [editingUser, setEditingUser] = useState(null);
 
-  // 🔹 Cargar usuarios y asistencias al entrar
+  // 🔹 Cargar usuarios y asistencias al iniciar
   useEffect(() => {
     fetchUsers();
     fetchAsistencias();
@@ -19,25 +23,18 @@ const AdminDashboard = () => {
   // 📦 Obtener todos los usuarios
   const fetchUsers = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/admin/users");
-      const data = await res.json();
-      setUsers(data);
+      const res = await axios.get("http://localhost:5000/api/admin/users");
+      setUsers(res.data);
     } catch (err) {
       console.error("❌ Error al obtener usuarios:", err);
     }
   };
 
-  // 📦 Obtener todas las asistencias
+  // 📦 Obtener todas las asistencias (con usuario registrado)
   const fetchAsistencias = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/admin/asistencias");
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        setAsistencias(data);
-      } else {
-        console.error("⚠️ El backend no devolvió un array:", data);
-        setAsistencias([]);
-      }
+      const res = await axios.get("http://localhost:5000/api/admin/asistencias");
+      setAsistencias(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("❌ Error al obtener asistencias:", err);
       setAsistencias([]);
@@ -48,22 +45,17 @@ const AdminDashboard = () => {
   const handleCreateUser = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:5000/api/admin/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newUser),
-      });
-
-      const data = await res.json();
-      if (res.ok) {
+      const res = await axios.post("http://localhost:5000/api/admin/users", newUser);
+      if (res.status === 200 || res.status === 201) {
         alert("✅ Usuario creado con éxito");
         setNewUser({ username: "", email: "", password: "", role: "user" });
         fetchUsers();
       } else {
-        alert(`⚠️ Error: ${data.msg || "No se pudo crear el usuario"}`);
+        alert("⚠️ No se pudo crear el usuario");
       }
     } catch (err) {
       console.error("❌ Error al crear usuario:", err);
+      alert("⚠️ Error al crear usuario");
     }
   };
 
@@ -71,10 +63,8 @@ const AdminDashboard = () => {
   const handleDeleteUser = async (id) => {
     if (!window.confirm("¿Seguro que deseas eliminar este usuario?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/users/${id}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
+      const res = await axios.delete(`http://localhost:5000/api/admin/users/${id}`);
+      if (res.status === 200) {
         alert("🗑️ Usuario eliminado");
         fetchUsers();
       } else {
@@ -85,12 +75,80 @@ const AdminDashboard = () => {
     }
   };
 
-  return (
-    <div>
-      <h1>Panel de Administración</h1>
+  // ✏️ Iniciar edición
+  const handleEditUser = (user) => {
+    setEditingUser(user);
+  };
 
-      {/* 🔹 Sección de creación de usuarios */}
-      <section>
+  // 💾 Guardar cambios de usuario
+  const handleUpdateUser = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.put(
+        `http://localhost:5000/api/admin/users/${editingUser._id}`,
+        editingUser
+      );
+      if (res.status === 200) {
+        alert("✅ Usuario actualizado correctamente");
+        setEditingUser(null);
+        fetchUsers();
+      }
+    } catch (err) {
+      console.error("❌ Error al actualizar usuario:", err);
+      alert("⚠️ No se pudo actualizar el usuario");
+    }
+  };
+
+  // ⬇️ Descargar PDF de asistencia
+  const descargarPDF = async (id) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/api/admin/asistencias/${id}/pdf`,
+        { responseType: "blob" }
+      );
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `Asistencia_${id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error("❌ Error al descargar PDF:", err);
+      alert("No se pudo descargar el PDF");
+    }
+  };
+
+  // 🚪 Cerrar sesión
+  const handleLogout = () => {
+    if (window.confirm("¿Deseas cerrar sesión?")) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      navigate("/login");
+    }
+  };
+
+  return (
+    <div style={{ padding: "20px", fontFamily: "Arial" }}>
+      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h1>Panel de Administración</h1>
+        <button
+          onClick={handleLogout}
+          style={{
+            backgroundColor: "#dc3545",
+            color: "white",
+            border: "none",
+            padding: "10px 15px",
+            borderRadius: "6px",
+            cursor: "pointer",
+          }}
+        >
+          🚪 Cerrar sesión
+        </button>
+      </header>
+
+      {/* 🔹 Crear nuevo usuario */}
+      <section style={{ marginBottom: "30px" }}>
         <h2>Crear nuevo usuario</h2>
         <form onSubmit={handleCreateUser}>
           <input
@@ -126,9 +184,9 @@ const AdminDashboard = () => {
       </section>
 
       {/* 🔹 Tabla de usuarios */}
-      <section>
+      <section style={{ marginBottom: "30px" }}>
         <h2>Lista de Usuarios</h2>
-        <table border="1">
+        <table border="1" cellPadding="6" style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr>
               <th>Nombre</th>
@@ -144,47 +202,88 @@ const AdminDashboard = () => {
                 <td>{u.email}</td>
                 <td>{u.role}</td>
                 <td>
-                  <button onClick={() => handleDeleteUser(u._id)}>
-                    Eliminar
-                  </button>
+                  <button onClick={() => handleEditUser(u)}>Editar</button>
+                  <button onClick={() => handleDeleteUser(u._id)}>Eliminar</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+
+        {/* Formulario de edición */}
+        {editingUser && (
+          <div style={{ marginTop: "20px" }}>
+            <h3>Editar Usuario</h3>
+            <form onSubmit={handleUpdateUser}>
+              <input
+                type="text"
+                value={editingUser.username}
+                onChange={(e) =>
+                  setEditingUser({ ...editingUser, username: e.target.value })
+                }
+                placeholder="Nombre de usuario"
+                required
+              />
+              <input
+                type="email"
+                value={editingUser.email}
+                onChange={(e) =>
+                  setEditingUser({ ...editingUser, email: e.target.value })
+                }
+                placeholder="Correo"
+                required
+              />
+              <select
+                value={editingUser.role}
+                onChange={(e) =>
+                  setEditingUser({ ...editingUser, role: e.target.value })
+                }
+              >
+                <option value="user">Usuario</option>
+                <option value="admin">Administrador</option>
+              </select>
+              <button type="submit">Guardar cambios</button>
+              <button type="button" onClick={() => setEditingUser(null)}>
+                Cancelar
+              </button>
+            </form>
+          </div>
+        )}
       </section>
 
-      {/* 🔹 Tabla de asistencias */}
+      {/* 🔹 Tabla de asistencias con PDF */}
       <section>
-        <h2>Asistencias registradas</h2>
-        <table border="1">
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Tema</th>
-              <th>Responsable</th>
-              <th>Sede</th>
-              <th>Registrado por</th>
-            </tr>
-          </thead>
-          <tbody>
-            {asistencias.length > 0 ? (
-              asistencias.map((a) => (
+        <h2>Asistencias Registradas</h2>
+        {asistencias.length === 0 ? (
+          <p>No hay asistencias registradas</p>
+        ) : (
+          <table border="1" cellPadding="6" style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Tema</th>
+                <th>Responsable</th>
+                <th>Sede</th>
+                <th>Registrado por</th>
+                <th>PDF</th>
+              </tr>
+            </thead>
+            <tbody>
+              {asistencias.map((a) => (
                 <tr key={a._id}>
                   <td>{new Date(a.fecha).toLocaleDateString()}</td>
                   <td>{a.tema}</td>
                   <td>{a.responsable}</td>
                   <td>{a.sede}</td>
-                  <td>{a.userId?.username || "Sin usuario"}</td>
+                  <td>{a.creadoPor?.username || "Sin usuario"}</td>
+                  <td>
+                    <button onClick={() => descargarPDF(a._id)}>⬇️ Descargar PDF</button>
+                  </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="5">No hay asistencias registradas</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        )}
       </section>
     </div>
   );
