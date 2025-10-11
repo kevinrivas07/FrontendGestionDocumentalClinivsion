@@ -13,14 +13,14 @@ const AdminDashboard = () => {
     role: "user",
   });
   const [editingUser, setEditingUser] = useState(null);
+  const [view, setView] = useState("crear");
 
-  // 🔹 Cargar usuarios y asistencias al iniciar
   useEffect(() => {
     fetchUsers();
     fetchAsistencias();
   }, []);
 
-  // 📦 Obtener todos los usuarios
+  // 📦 Obtener usuarios
   const fetchUsers = async () => {
     try {
       const res = await axios.get("http://localhost:5000/api/admin/users");
@@ -30,7 +30,7 @@ const AdminDashboard = () => {
     }
   };
 
-  // 📦 Obtener todas las asistencias (con usuario registrado)
+  // 📦 Obtener asistencias
   const fetchAsistencias = async () => {
     try {
       const res = await axios.get("http://localhost:5000/api/admin/asistencias");
@@ -75,12 +75,12 @@ const AdminDashboard = () => {
     }
   };
 
-  // ✏️ Iniciar edición
+  // ✏️ Editar usuario
   const handleEditUser = (user) => {
     setEditingUser(user);
   };
 
-  // 💾 Guardar cambios de usuario
+  // 💾 Guardar cambios
   const handleUpdateUser = async (e) => {
     e.preventDefault();
     try {
@@ -99,11 +99,11 @@ const AdminDashboard = () => {
     }
   };
 
-  // ⬇️ Descargar PDF de asistencia
+  // ⬇️ Descargar PDF
   const descargarPDF = async (id) => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/admin/asistencias/${id}/pdf`,
+        `http://localhost:5000/api/asistencia/${id}/pdf`,
         { responseType: "blob" }
       );
       const url = window.URL.createObjectURL(new Blob([res.data]));
@@ -130,161 +130,164 @@ const AdminDashboard = () => {
 
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
-      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h1>Panel de Administración</h1>
+      <h1>Panel de Administración</h1>
+
+      {/* 🔹 Botones principales */}
+      <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+        <button onClick={() => setView("crear")}>Crear nuevo usuario</button>
+        <button onClick={() => setView("lista")}>Lista de usuarios</button>
+        <button onClick={() => setView("asistencias")}>Asistencias registradas</button>
         <button
           onClick={handleLogout}
-          style={{
-            backgroundColor: "#dc3545",
-            color: "white",
-            border: "none",
-            padding: "10px 15px",
-            borderRadius: "6px",
-            cursor: "pointer",
-          }}
+          style={{ backgroundColor: "#dc3545", color: "white", cursor: "pointer" }}
         >
           🚪 Cerrar sesión
         </button>
-      </header>
+      </div>
 
       {/* 🔹 Crear nuevo usuario */}
-      <section style={{ marginBottom: "30px" }}>
-        <h2>Crear nuevo usuario</h2>
-        <form onSubmit={handleCreateUser}>
-          <input
-            type="text"
-            placeholder="Nombre de usuario"
-            value={newUser.username}
-            onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
-            required
-          />
-          <input
-            type="email"
-            placeholder="Correo"
-            value={newUser.email}
-            onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Contraseña"
-            value={newUser.password}
-            onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-            required
-          />
-          <select
-            value={newUser.role}
-            onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-          >
-            <option value="user">Usuario</option>
-            <option value="admin">Administrador</option>
-          </select>
-          <button type="submit">Crear</button>
-        </form>
-      </section>
+      {view === "crear" && (
+        <section>
+          <h2>Crear nuevo usuario</h2>
+          <form onSubmit={handleCreateUser}>
+            <input
+              type="text"
+              placeholder="Nombre de usuario"
+              value={newUser.username}
+              onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
+              required
+            />
+            <input
+              type="email"
+              placeholder="Correo"
+              value={newUser.email}
+              onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Contraseña"
+              value={newUser.password}
+              onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+              required
+            />
+            <select
+              value={newUser.role}
+              onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
+            >
+              <option value="user">Usuario</option>
+              <option value="admin">Administrador</option>
+            </select>
+            <button type="submit">Crear</button>
+          </form>
+        </section>
+      )}
 
-      {/* 🔹 Tabla de usuarios */}
-      <section style={{ marginBottom: "30px" }}>
-        <h2>Lista de Usuarios</h2>
-        <table border="1" cellPadding="6" style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Correo</th>
-              <th>Rol</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((u) => (
-              <tr key={u._id}>
-                <td>{u.username}</td>
-                <td>{u.email}</td>
-                <td>{u.role}</td>
-                <td>
-                  <button onClick={() => handleEditUser(u)}>Editar</button>
-                  <button onClick={() => handleDeleteUser(u._id)}>Eliminar</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {/* Formulario de edición */}
-        {editingUser && (
-          <div style={{ marginTop: "20px" }}>
-            <h3>Editar Usuario</h3>
-            <form onSubmit={handleUpdateUser}>
-              <input
-                type="text"
-                value={editingUser.username}
-                onChange={(e) =>
-                  setEditingUser({ ...editingUser, username: e.target.value })
-                }
-                placeholder="Nombre de usuario"
-                required
-              />
-              <input
-                type="email"
-                value={editingUser.email}
-                onChange={(e) =>
-                  setEditingUser({ ...editingUser, email: e.target.value })
-                }
-                placeholder="Correo"
-                required
-              />
-              <select
-                value={editingUser.role}
-                onChange={(e) =>
-                  setEditingUser({ ...editingUser, role: e.target.value })
-                }
-              >
-                <option value="user">Usuario</option>
-                <option value="admin">Administrador</option>
-              </select>
-              <button type="submit">Guardar cambios</button>
-              <button type="button" onClick={() => setEditingUser(null)}>
-                Cancelar
-              </button>
-            </form>
-          </div>
-        )}
-      </section>
-
-      {/* 🔹 Tabla de asistencias con PDF */}
-      <section>
-        <h2>Asistencias Registradas</h2>
-        {asistencias.length === 0 ? (
-          <p>No hay asistencias registradas</p>
-        ) : (
+      {/* 🔹 Lista de usuarios */}
+      {view === "lista" && (
+        <section>
+          <h2>Lista de Usuarios</h2>
           <table border="1" cellPadding="6" style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr>
-                <th>Fecha</th>
-                <th>Tema</th>
-                <th>Responsable</th>
-                <th>Sede</th>
-                <th>Registrado por</th>
-                <th>PDF</th>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {asistencias.map((a) => (
-                <tr key={a._id}>
-                  <td>{new Date(a.fecha).toLocaleDateString()}</td>
-                  <td>{a.tema}</td>
-                  <td>{a.responsable}</td>
-                  <td>{a.sede}</td>
-                  <td>{a.creadoPor?.username || "Sin usuario"}</td>
+              {users.map((u) => (
+                <tr key={u._id}>
+                  <td>{u.username}</td>
+                  <td>{u.email}</td>
+                  <td>{u.role}</td>
                   <td>
-                    <button onClick={() => descargarPDF(a._id)}>⬇️ Descargar PDF</button>
+                    <button onClick={() => handleEditUser(u)}>Editar</button>
+                    <button onClick={() => handleDeleteUser(u._id)}>Eliminar</button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        )}
-      </section>
+
+          {editingUser && (
+            <div style={{ marginTop: "20px" }}>
+              <h3>Editar Usuario</h3>
+              <form onSubmit={handleUpdateUser}>
+                <input
+                  type="text"
+                  value={editingUser.username}
+                  onChange={(e) =>
+                    setEditingUser({ ...editingUser, username: e.target.value })
+                  }
+                  placeholder="Nombre de usuario"
+                  required
+                />
+                <input
+                  type="email"
+                  value={editingUser.email}
+                  onChange={(e) =>
+                    setEditingUser({ ...editingUser, email: e.target.value })
+                  }
+                  placeholder="Correo"
+                  required
+                />
+                <select
+                  value={editingUser.role}
+                  onChange={(e) =>
+                    setEditingUser({ ...editingUser, role: e.target.value })
+                  }
+                >
+                  <option value="user">Usuario</option>
+                  <option value="admin">Administrador</option>
+                </select>
+                <button type="submit">Guardar cambios</button>
+                <button type="button" onClick={() => setEditingUser(null)}>
+                  Cancelar
+                </button>
+              </form>
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* 🔹 Asistencias registradas */}
+      {view === "asistencias" && (
+        <section>
+          <h2>Asistencias Registradas</h2>
+          {asistencias.length === 0 ? (
+            <p>No hay asistencias registradas</p>
+          ) : (
+            <table border="1" cellPadding="6" style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Tema</th>
+                  <th>Responsable</th>
+                  <th>Sede</th>
+                  <th>Registrado por</th>
+                  <th>PDF</th>
+                </tr>
+              </thead>
+              <tbody>
+                {asistencias.map((a) => (
+                  <tr key={a._id}>
+                    <td>{new Date(a.fecha).toLocaleDateString()}</td>
+                    <td>{a.tema}</td>
+                    <td>{a.responsable}</td>
+                    <td>{a.sede}</td>
+                    <td>{a.creadoPor?.username || "Sin usuario"}</td>
+                    <td>
+                      <button onClick={() => descargarPDF(a._id)}>⬇️ Descargar PDF</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </section>
+      )}
     </div>
   );
 };
