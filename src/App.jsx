@@ -10,6 +10,8 @@ import AsistenciaForm from "./components/AsistenciaForm";
 import AsistenciaList from "./components/AsistenciaList";
 import AdminUpload from "./components/AdminUpload";
 import AdminDashboard from "./components/AdminDashboard"; // ✅ corregido el import (ahora sí con "d")
+import DotacionesForm from "./components/DotacionesForm";
+import DotacionesList from "./components/DotacionesList";
 
 import "./App.css";
 
@@ -63,6 +65,9 @@ function App() {
           <Route path="/register-admin" element={<RegisterAdmin />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/dotaciones" element={<DotacionesForm />} />
+          <Route path="/dotaciones-list" element={<DotacionesList />} />
+
 
           {/* 👨‍💼 Panel de administrador */}
           <Route
