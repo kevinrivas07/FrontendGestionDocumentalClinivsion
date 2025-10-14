@@ -7,6 +7,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [asistencias, setAsistencias] = useState([]);
+  const [dotaciones, setDotaciones] = useState([]);
   const [newUser, setNewUser] = useState({
     username: "",
     email: "",
@@ -19,22 +20,29 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchUsers();
     fetchAsistencias();
+    fetchDotaciones();
   }, []);
 
   // 📦 Obtener usuarios
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/admin/users");
+      const token = localStorage.getItem("token");
+      const res = await axios.get("http://localhost:5000/api/admin/users", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setUsers(res.data);
     } catch (err) {
       console.error("❌ Error al obtener usuarios:", err);
     }
   };
 
-  // 📦 Obtener asistencias
+  // 📋 Obtener asistencias
   const fetchAsistencias = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/admin/asistencias");
+      const token = localStorage.getItem("token");
+      const res = await axios.get("http://localhost:5000/api/admin/asistencias", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setAsistencias(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("❌ Error al obtener asistencias:", err);
@@ -42,11 +50,29 @@ const AdminDashboard = () => {
     }
   };
 
+  // 📦 Obtener dotaciones
+  const fetchDotaciones = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get("http://localhost:5000/api/dotaciones", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setDotaciones(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("❌ Error al obtener dotaciones:", err);
+      setDotaciones([]);
+    }
+  };
+
   // ➕ Crear nuevo usuario
   const handleCreateUser = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/api/admin/users", newUser);
+      const token = localStorage.getItem("token");
+      const res = await axios.post("http://localhost:5000/api/admin/users", newUser, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       if (res.status === 200 || res.status === 201) {
         alert("✅ Usuario creado con éxito");
         setNewUser({ username: "", email: "", password: "", role: "user" });
@@ -64,7 +90,10 @@ const AdminDashboard = () => {
   const handleDeleteUser = async (id) => {
     if (!window.confirm("¿Seguro que deseas eliminar este usuario?")) return;
     try {
-      const res = await axios.delete(`http://localhost:5000/api/admin/users/${id}`);
+      const token = localStorage.getItem("token");
+      const res = await axios.delete(`http://localhost:5000/api/admin/users/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (res.status === 200) {
         alert("🗑️ Usuario eliminado");
         fetchUsers();
@@ -85,9 +114,13 @@ const AdminDashboard = () => {
   const handleUpdateUser = async (e) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem("token");
       const res = await axios.put(
         `http://localhost:5000/api/admin/users/${editingUser._id}`,
-        editingUser
+        editingUser,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
       if (res.status === 200) {
         alert("✅ Usuario actualizado correctamente");
@@ -100,12 +133,13 @@ const AdminDashboard = () => {
     }
   };
 
-  // ⬇️ Descargar PDF
+  // ⬇️ Descargar PDF de asistencia
   const descargarPDF = async (id) => {
     try {
+      const token = localStorage.getItem("token");
       const res = await axios.get(
         `http://localhost:5000/api/asistencia/${id}/pdf`,
-        { responseType: "blob" }
+        { responseType: "blob", headers: { Authorization: `Bearer ${token}` } }
       );
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement("a");
@@ -117,6 +151,27 @@ const AdminDashboard = () => {
     } catch (err) {
       console.error("❌ Error al descargar PDF:", err);
       alert("No se pudo descargar el PDF");
+    }
+  };
+
+  // ⬇️ Descargar PDF de dotación
+  const descargarPDFDotacion = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(
+        `http://localhost:5000/api/dotaciones/${id}/pdf`,
+        { responseType: "blob", headers: { Authorization: `Bearer ${token}` } }
+      );
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `Dotacion_${id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error("❌ Error al descargar PDF de dotación:", err);
+      alert("No se pudo descargar el PDF de dotación");
     }
   };
 
@@ -134,49 +189,32 @@ const AdminDashboard = () => {
       <div className="admin-dashboard-container">
         <h1>👨‍💼 Panel de Administración</h1>
 
-        {/* 🔹 Botones principales */}
         <div className="dashboard-nav">
-          <button 
+          <button
             className={`nav-btn ${view === "crear" ? "active" : ""}`}
             onClick={() => setView("crear")}
           >
             ➕ Crear nuevo usuario
           </button>
-
-          {/* subir PDF 
-          <button 
-            className={`nav-btn ${view === "crear" ? "active" : ""}`}
-            onClick={() => setView("crear")}
-          >
-            🔼 Subir PDF
-          </button>
-          */ }
-
-          <button 
+          <button
             className={`nav-btn ${view === "lista" ? "active" : ""}`}
             onClick={() => setView("lista")}
           >
             👥 Lista de usuarios
           </button>
-
-          <button 
+          <button
             className={`nav-btn ${view === "asistencias" ? "active" : ""}`}
             onClick={() => setView("asistencias")}
           >
             📋 Asistencias registradas
           </button>
-
-          <button 
+          <button
             className={`nav-btn ${view === "dotaciones" ? "active" : ""}`}
             onClick={() => setView("dotaciones")}
           >
-            📋 Dotaciones registradas
+            📦 Dotaciones registradas
           </button>
-
-          <button
-            onClick={handleLogout}
-            className="logout-btn"
-          >
+          <button onClick={handleLogout} className="logout-btn">
             🚪 Cerrar sesión
           </button>
         </div>
@@ -191,7 +229,9 @@ const AdminDashboard = () => {
                   type="text"
                   placeholder="Nombre de usuario"
                   value={newUser.username}
-                  onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, username: e.target.value })
+                  }
                   className="form-input"
                   required
                 />
@@ -199,7 +239,9 @@ const AdminDashboard = () => {
                   type="email"
                   placeholder="Correo electrónico"
                   value={newUser.email}
-                  onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, email: e.target.value })
+                  }
                   className="form-input"
                   required
                 />
@@ -209,20 +251,26 @@ const AdminDashboard = () => {
                   type="password"
                   placeholder="Contraseña"
                   value={newUser.password}
-                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, password: e.target.value })
+                  }
                   className="form-input"
                   required
                 />
                 <select
                   value={newUser.role}
-                  onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, role: e.target.value })
+                  }
                   className="form-select"
                 >
                   <option value="user">Usuario</option>
                   <option value="admin">Administrador</option>
                 </select>
               </div>
-              <button type="submit" className="form-btn">✅ Crear Usuario</button>
+              <button type="submit" className="form-btn">
+                ✅ Crear Usuario
+              </button>
             </form>
           </section>
         )}
@@ -247,13 +295,13 @@ const AdminDashboard = () => {
                     <td data-label="Correo">{u.email}</td>
                     <td data-label="Rol">{u.role}</td>
                     <td data-label="Acciones">
-                      <button 
+                      <button
                         onClick={() => handleEditUser(u)}
                         className="form-btn secondary"
                       >
                         ✏️ Editar
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleDeleteUser(u._id)}
                         className="form-btn danger"
                       >
@@ -274,7 +322,10 @@ const AdminDashboard = () => {
                       type="text"
                       value={editingUser.username}
                       onChange={(e) =>
-                        setEditingUser({ ...editingUser, username: e.target.value })
+                        setEditingUser({
+                          ...editingUser,
+                          username: e.target.value,
+                        })
                       }
                       placeholder="Nombre de usuario"
                       className="form-input"
@@ -284,7 +335,10 @@ const AdminDashboard = () => {
                       type="email"
                       value={editingUser.email}
                       onChange={(e) =>
-                        setEditingUser({ ...editingUser, email: e.target.value })
+                        setEditingUser({
+                          ...editingUser,
+                          email: e.target.value,
+                        })
                       }
                       placeholder="Correo electrónico"
                       className="form-input"
@@ -295,7 +349,10 @@ const AdminDashboard = () => {
                     <select
                       value={editingUser.role}
                       onChange={(e) =>
-                        setEditingUser({ ...editingUser, role: e.target.value })
+                        setEditingUser({
+                          ...editingUser,
+                          role: e.target.value,
+                        })
                       }
                       className="form-select"
                     >
@@ -304,9 +361,11 @@ const AdminDashboard = () => {
                     </select>
                   </div>
                   <div>
-                    <button type="submit" className="form-btn">💾 Guardar cambios</button>
-                    <button 
-                      type="button" 
+                    <button type="submit" className="form-btn">
+                      💾 Guardar cambios
+                    </button>
+                    <button
+                      type="button"
                       onClick={() => setEditingUser(null)}
                       className="form-btn secondary"
                     >
@@ -316,17 +375,15 @@ const AdminDashboard = () => {
                 </form>
               </div>
             )}
-        </section>
-      )}
+          </section>
+        )}
 
         {/* 🔹 Asistencias registradas */}
         {view === "asistencias" && (
           <section className="dashboard-section">
             <h2>📋 Asistencias Registradas</h2>
             {asistencias.length === 0 ? (
-              <div className="empty-state">
-                No hay asistencias registradas
-              </div>
+              <div className="empty-state">No hay asistencias registradas</div>
             ) : (
               <table className="dashboard-table">
                 <thead>
@@ -342,13 +399,13 @@ const AdminDashboard = () => {
                 <tbody>
                   {asistencias.map((a) => (
                     <tr key={a._id}>
-                      <td data-label="Fecha">{new Date(a.fecha).toLocaleDateString()}</td>
-                      <td data-label="Tema">{a.tema}</td>
-                      <td data-label="Responsable">{a.responsable}</td>
-                      <td data-label="Sede">{a.sede}</td>
-                      <td data-label="Registrado por">{a.creadoPor?.username || "Sin usuario"}</td>
-                      <td data-label="PDF">
-                        <button 
+                      <td>{new Date(a.fecha).toLocaleDateString()}</td>
+                      <td>{a.tema}</td>
+                      <td>{a.responsable}</td>
+                      <td>{a.sede}</td>
+                      <td>{a.creadoPor?.username || "Sin usuario"}</td>
+                      <td>
+                        <button
                           onClick={() => descargarPDF(a._id)}
                           className="form-btn"
                         >
@@ -362,8 +419,61 @@ const AdminDashboard = () => {
             )}
           </section>
         )}
+
+        {/* 🔹 Dotaciones registradas */}
+        {view === "dotaciones" && (
+          <section className="dashboard-section">
+            <h2>📦 Dotaciones Registradas</h2>
+            {dotaciones.length === 0 ? (
+              <div className="empty-state">No hay dotaciones registradas</div>
+            ) : (
+              <table className="dashboard-table">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Nombre</th>
+                    <th>Cédula</th>
+                    <th>Cargo</th>
+                    <th>Elementos</th>
+                    <th>Registrado por</th>
+                    <th>PDF</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dotaciones.map((d) => (
+                    <tr key={d._id}>
+                      <td>{new Date(d.fecha).toLocaleDateString()}</td>
+                      <td>{d.nombre}</td>
+                      <td>{d.cedula}</td>
+                      <td>{d.cargo}</td>
+                      <td>
+                        {d.elementos?.map((el, i) => (
+                          <div key={i}>
+                            {el.nombre} ({el.cantidad})
+                          </div>
+                        ))}
+                      </td>
+                      <td>{d.creadoPor?.username || "Sin usuario"}</td>
+                      <td>
+                        <button
+                          onClick={() => descargarPDFDotacion(d._id)}
+                          className="form-btn"
+                        >
+                          ⬇️ Descargar PDF
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </section>
+        )}
       </div>
-      <a href="" target="" className="created">Created by: Kevin Rivas</a>
+
+      <a href="#" target="_blank" className="created">
+        Created by: Kevin Rivas
+      </a>
     </div>
   );
 };
