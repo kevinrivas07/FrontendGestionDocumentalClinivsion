@@ -354,6 +354,7 @@ const AdminDashboard = () => {
           </section>
         )}
       </div>
+      <a href="" target="" className="created">Created by: Kevin Rivas</a>
     </div>
   );
 };

@@ -66,6 +66,7 @@ const Home = () => {
           Cerrar Sesión
         </button>
       </main>
+      <a href="" target="" className="created">Created by: Kevin Rivas</a>
     </div>
   );
 };

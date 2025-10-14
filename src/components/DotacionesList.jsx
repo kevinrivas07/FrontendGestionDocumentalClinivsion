@@ -94,6 +94,7 @@ export default function DotacionesList() {
           ← Volver
         </button>
       </div>
+      <a href="" target="" className="created">Created by: Kevin Rivas</a>
     </div>
   );
 }

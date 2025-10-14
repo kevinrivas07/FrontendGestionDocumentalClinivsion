@@ -190,6 +190,7 @@ export default function AsistenciaForm() {
           </div>
         </div>
       )}
+      <a href="" target="" className="created">Created by: Kevin Rivas</a>
     </div>
   );
 }

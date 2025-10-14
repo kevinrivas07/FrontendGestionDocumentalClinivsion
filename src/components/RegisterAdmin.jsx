@@ -146,6 +146,7 @@ const RegisterAdmin = () => {
 
         <button onClick={handleLogout} className="logout-btn">← Volver al Login</button>
       </div>
+      <a href="" target="" className="created">Created by: Kevin Rivas</a>
     </div>
   );
 };

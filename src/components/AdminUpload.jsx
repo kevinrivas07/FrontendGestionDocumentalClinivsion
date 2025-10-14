@@ -110,6 +110,7 @@ export default function AdminUpload() {
       <button className="back" type="button" onClick={() => navigate("/")}>
         Volver
       </button>
+      <a href="" target="" className="created">Created by: Kevin Rivas</a>
     </div>
   );
 }
