@@ -1,0 +1,303 @@
+/* 🌐 Contenedor principal */
+.dotaciones-list-wrap {
+  padding: 2rem;
+  min-height: 100vh;
+  background: transparent;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.dotaciones-list-wrap::before { display: none; }
+
+/* 🖼️ Imagen de cabecera */
+.header-image {
+  width: 100%;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 2;
+}
+
+/* 📌 Contenedor principal */
+.dotaciones-list-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: saturate(120%) blur(20px);
+  -webkit-backdrop-filter: saturate(120%) blur(20px);
+  padding: 3rem;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.05);
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dotaciones-list-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15), 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* 🏥 Título */
+.dotaciones-list-container h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  background: linear-gradient(90deg, #1a202c, #2b6cb0, #2f855a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 0 0 2rem;
+  text-align: center;
+  position: relative;
+}
+
+.dotaciones-list-container h2::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -10px;
+  width: 120px;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #4299e1, #48bb78);
+}
+
+/* 📊 Tabla */
+.dotaciones-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.dotaciones-table thead {
+  background: linear-gradient(135deg, #4299e1, #3182ce);
+  color: white;
+}
+
+.dotaciones-table th {
+  padding: 1.5rem 1rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.dotaciones-table td {
+  padding: 1.25rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 1rem;
+  color: #2d3748;
+}
+
+.dotaciones-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.dotaciones-table tbody tr:hover {
+  background: #f7fafc;
+  transform: scale(1.01);
+}
+
+.dotaciones-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* 🔘 Botones */
+.download-btn {
+  background: linear-gradient(135deg, #48bb78, #38a169);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(72, 187, 120, 0.3);
+}
+
+.download-btn:active {
+  transform: translateY(0);
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: linear-gradient(#ffffff, #ffffff) padding-box,
+    linear-gradient(135deg, rgba(66, 153, 225, 0.7), rgba(72, 187, 120, 0.7)) border-box;
+  color: #1a202c;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+  font-size: 16px;
+  margin: 2rem auto;
+  display: block;
+  max-width: 200px;
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+.back-btn:active {
+  transform: translateY(0);
+}
+
+/* 📝 Mensaje de estado vacío */
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #718096;
+  font-size: 1.2rem;
+  background: #f7fafc;
+  border-radius: 16px;
+  border: 2px dashed #cbd5e0;
+}
+
+.empty-state::before {
+  content: "📦";
+  display: block;
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+/* 🎞️ Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glowDrift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(2%, -2%, 0) scale(1.04);
+  }
+}
+
+/* ♿ Accesibilidad: respeta usuarios con "reduced motion" */
+@media (prefers-reduced-motion: reduce) {
+  .dotaciones-list-wrap,
+  .dotaciones-list-wrap::before,
+  .dotaciones-list-container {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* 📱 Responsive */
+@media (max-width: 1024px) {
+  .dotaciones-list-container {
+    padding: 2rem 1.5rem;
+  }
+  
+  .dotaciones-table {
+    font-size: 0.9rem;
+  }
+  
+  .dotaciones-table th,
+  .dotaciones-table td {
+    padding: 1rem 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .dotaciones-list-wrap {
+    padding: 1rem;
+  }
+  
+  .dotaciones-list-container {
+    padding: 1.5rem 1rem;
+  }
+  
+  .dotaciones-list-container h2 {
+    font-size: 2rem;
+  }
+  
+  .dotaciones-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  .dotaciones-table thead,
+  .dotaciones-table tbody,
+  .dotaciones-table th,
+  .dotaciones-table td,
+  .dotaciones-table tr {
+    display: block;
+  }
+  
+  .dotaciones-table thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  
+  .dotaciones-table tr {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dotaciones-table td {
+    border: none;
+    position: relative;
+    padding: 0.5rem 0 0.5rem 50%;
+    white-space: normal;
+  }
+  
+  .dotaciones-table td:before {
+    content: attr(data-label) ": ";
+    position: absolute;
+    left: 6px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    font-weight: 700;
+    color: #2d3748;
+  }
+}
+
+@media (max-width: 480px) {
+  .dotaciones-list-container h2 {
+    font-size: 1.8rem;
+  }
+  
+  .header-image {
+    max-height: 200px;
+  }
+}

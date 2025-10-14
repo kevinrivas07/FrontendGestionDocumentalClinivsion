@@ -3,6 +3,7 @@ import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import SignatureCanvas from "react-signature-canvas";
 import axios from "axios";
+import "../styles/DotacionesForm.css";
 
 export default function DotacionesForm() {
   const navigate = useNavigate();
@@ -69,57 +70,127 @@ export default function DotacionesForm() {
   };
 
   return (
-    <div>
-      <h2>Entrega de Dotación</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="date" name="fecha" value={form.fecha} onChange={handleChange} required />
-        <input type="text" name="nombre" placeholder="Nombre del colaborador" value={form.nombre} onChange={handleChange} required />
-        <input type="text" name="cedula" placeholder="Cédula" value={form.cedula} onChange={handleChange} required />
-        <input type="text" name="cargo" placeholder="Cargo" value={form.cargo} onChange={handleChange} />
-
-        <h3>Elementos Entregados</h3>
-        {form.elementos.map((el, i) => (
-          <div key={i}>
-            <input
-              name="cantidad"
-              type="number"
-              placeholder="Cantidad"
-              value={el.cantidad}
-              onChange={(e) => handleElementoChange(i, e)}
+    <div className="dotaciones-form-wrap">
+      <div className="dotaciones-form-container">
+        <h2>📦 Entrega de Dotación</h2>
+        <form onSubmit={handleSubmit} className="dotaciones-form">
+          <div className="form-row">
+            <input 
+              type="date" 
+              name="fecha" 
+              value={form.fecha} 
+              onChange={handleChange} 
+              className="form-input"
+              required 
             />
-            <input
-              name="nombre"
-              type="text"
-              placeholder="Elemento"
-              value={el.nombre}
-              onChange={(e) => handleElementoChange(i, e)}
+            <input 
+              type="text" 
+              name="nombre" 
+              placeholder="Nombre del colaborador" 
+              value={form.nombre} 
+              onChange={handleChange} 
+              className="form-input"
+              required 
             />
-            <button type="button" onClick={() => eliminarElemento(i)}>❌</button>
           </div>
-        ))}
-        <button type="button" onClick={agregarElemento}>➕ Agregar elemento</button>
+          
+          <div className="form-row">
+            <input 
+              type="text" 
+              name="cedula" 
+              placeholder="Cédula" 
+              value={form.cedula} 
+              onChange={handleChange} 
+              className="form-input"
+              required 
+            />
+            <input 
+              type="text" 
+              name="cargo" 
+              placeholder="Cargo" 
+              value={form.cargo} 
+              onChange={handleChange} 
+              className="form-input"
+            />
+          </div>
 
-        <div>
-          <h3>Firma del colaborador</h3>
-          {form.firma ? (
-            <img src={form.firma} alt="firma" width="200" />
-          ) : (
-            <button type="button" onClick={() => setFirmaAbierta(true)}>Agregar Firma</button>
-          )}
-        </div>
+          <div className="elementos-section">
+            <h3>Elementos Entregados</h3>
+            {form.elementos.map((el, i) => (
+              <div key={i} className="elemento-item">
+                <input
+                  name="cantidad"
+                  type="number"
+                  placeholder="Cantidad"
+                  value={el.cantidad}
+                  onChange={(e) => handleElementoChange(i, e)}
+                  className="form-input"
+                />
+                <input
+                  name="nombre"
+                  type="text"
+                  placeholder="Elemento"
+                  value={el.nombre}
+                  onChange={(e) => handleElementoChange(i, e)}
+                  className="form-input"
+                />
+                <button 
+                  type="button" 
+                  onClick={() => eliminarElemento(i)}
+                  className="remove-elemento-btn"
+                >
+                  ❌ Eliminar
+                </button>
+              </div>
+            ))}
+            <button 
+              type="button" 
+              onClick={agregarElemento}
+              className="add-elemento-btn"
+            >
+              ➕ Agregar elemento
+            </button>
+          </div>
 
-        <button type="submit">Generar PDF</button>
-        <button type="button" onClick={() => navigate("/")}>Volver</button>
-      </form>
+          <div className="firma-section">
+            <h3>✍️ Firma del colaborador</h3>
+            {form.firma ? (
+              <div className="firma-preview">
+                <img src={form.firma} alt="firma" />
+              </div>
+            ) : (
+              <button 
+                type="button" 
+                onClick={() => setFirmaAbierta(true)}
+                className="firma-btn"
+              >
+                Agregar Firma
+              </button>
+            )}
+          </div>
 
-      {firmaAbierta && (
-        <div>
-          <SignatureCanvas ref={sigPadRef} penColor="black" canvasProps={{ width: 400, height: 120 }} />
-          <button onClick={borrarFirma}>Borrar</button>
-          <button onClick={guardarFirma}>Guardar Firma</button>
-          <button onClick={() => setFirmaAbierta(false)}>Cerrar</button>
-        </div>
-      )}
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button type="submit" className="submit-btn">📄 Generar PDF</button>
+            <button type="button" onClick={() => navigate("/")} className="back-btn">← Volver</button>
+          </div>
+        </form>
+
+        {firmaAbierta && (
+          <div className="firma-canvas-container">
+            <h3>Firma Digital</h3>
+            <SignatureCanvas 
+              ref={sigPadRef} 
+              penColor="black" 
+              canvasProps={{ width: 400, height: 120 }} 
+            />
+            <div className="firma-controls">
+              <button onClick={borrarFirma} className="firma-btn secondary">🗑️ Borrar</button>
+              <button onClick={guardarFirma} className="firma-btn">💾 Guardar Firma</button>
+              <button onClick={() => setFirmaAbierta(false)} className="firma-btn secondary">❌ Cerrar</button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

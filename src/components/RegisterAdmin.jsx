@@ -60,15 +60,86 @@ const RegisterAdmin = () => {
         <h2>👨‍💼 Registro de Administrador</h2>
 
         <form onSubmit={handleRegister} className="register-form">
-          <input type="text" name="nombre" placeholder="Nombre completo" value={formData.nombre} onChange={handleChange} required />
-          <input type="text" name="ciudad" placeholder="Ciudad" value={formData.ciudad} onChange={handleChange} required />
-          <input type="text" name="cedula" placeholder="Cédula" value={formData.cedula} onChange={handleChange} required />
-          <input type="date" name="fecha" value={formData.fecha} onChange={handleChange} required />
-          <input type="text" name="phone" placeholder="Teléfono" value={formData.phone} onChange={handleChange} required />
-          <input type="text" name="username" placeholder="Usuario" value={formData.username} onChange={handleChange} required />
-          <input type="email" name="email" placeholder="Correo electrónico" value={formData.email} onChange={handleChange} required />
-          <input type="password" name="password" placeholder="Contraseña" value={formData.password} onChange={handleChange} required />
-          <input type="password" name="confirmPassword" placeholder="Confirmar contraseña" value={formData.confirmPassword} onChange={handleChange} required />
+          <input 
+            type="text" 
+            name="nombre" 
+            placeholder="Nombre completo" 
+            value={formData.nombre} 
+            onChange={handleChange} 
+            className="form-input"
+            required 
+          />
+          <input 
+            type="text" 
+            name="ciudad" 
+            placeholder="Ciudad" 
+            value={formData.ciudad} 
+            onChange={handleChange} 
+            className="form-input"
+            required 
+          />
+          <input 
+            type="text" 
+            name="cedula" 
+            placeholder="Cédula" 
+            value={formData.cedula} 
+            onChange={handleChange} 
+            className="form-input"
+            required 
+          />
+          <input 
+            type="date" 
+            name="fecha" 
+            value={formData.fecha} 
+            onChange={handleChange} 
+            className="form-input"
+            required 
+          />
+          <input 
+            type="text" 
+            name="phone" 
+            placeholder="Teléfono" 
+            value={formData.phone} 
+            onChange={handleChange} 
+            className="form-input"
+            required 
+          />
+          <input 
+            type="text" 
+            name="username" 
+            placeholder="Usuario" 
+            value={formData.username} 
+            onChange={handleChange} 
+            className="form-input"
+            required 
+          />
+          <input 
+            type="email" 
+            name="email" 
+            placeholder="Correo electrónico" 
+            value={formData.email} 
+            onChange={handleChange} 
+            className="form-input"
+            required 
+          />
+          <input 
+            type="password" 
+            name="password" 
+            placeholder="Contraseña" 
+            value={formData.password} 
+            onChange={handleChange} 
+            className="form-input"
+            required 
+          />
+          <input 
+            type="password" 
+            name="confirmPassword" 
+            placeholder="Confirmar contraseña" 
+            value={formData.confirmPassword} 
+            onChange={handleChange} 
+            className="form-input"
+            required 
+          />
 
           <button type="submit" className="register-btn">Registrar Administrador</button>
         </form>

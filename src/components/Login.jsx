@@ -126,6 +126,7 @@ function Login() {
           </p>
         </div>
       </div>
+      <a href="" target="" className="created">Created by: Kevin Rivas</a>
     </div>
   );
 }

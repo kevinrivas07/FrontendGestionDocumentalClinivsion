@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "../styles/DotacionesList.css";
 
 export default function DotacionesList() {
   const navigate = useNavigate();
@@ -37,61 +38,62 @@ export default function DotacionesList() {
   };
 
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial" }}>
+    <div className="dotaciones-list-wrap">
       <img
         src={new URL("../assets/vision.jpg", import.meta.url).href}
         alt="Clínica de la Visión"
-        style={{ width: "100%", maxHeight: "200px", objectFit: "cover", marginBottom: "15px" }}
+        className="header-image"
       />
 
-      <h2>📦 Entregas de Dotación Registradas</h2>
+      <div className="dotaciones-list-container">
+        <h2>📦 Entregas de Dotación Registradas</h2>
 
-      {dotaciones.length === 0 ? (
-        <p>No hay registros de dotación guardados.</p>
-      ) : (
-        <table border="1" cellPadding="8" style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Nombre</th>
-              <th>Cédula</th>
-              <th>Cargo</th>
-              <th>Registrado por</th>
-              <th>PDF</th>
-            </tr>
-          </thead>
-          <tbody>
-            {dotaciones.map((d) => (
-              <tr key={d._id}>
-                <td>{new Date(d.fecha).toLocaleDateString()}</td>
-                <td>{d.nombre}</td>
-                <td>{d.cedula}</td>
-                <td>{d.cargo}</td>
-                <td>{d.creadoPor?.username || "Sin usuario"}</td>
-                <td>
-                  <button onClick={() => descargarPDF(d._id)}>⬇️ Descargar PDF</button>
-                </td>
+        {dotaciones.length === 0 ? (
+          <div className="empty-state">
+            No hay registros de dotación guardados.
+          </div>
+        ) : (
+          <table className="dotaciones-table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Nombre</th>
+                <th>Cédula</th>
+                <th>Cargo</th>
+                <th>Registrado por</th>
+                <th>PDF</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {dotaciones.map((d) => (
+                <tr key={d._id}>
+                  <td data-label="Fecha">{new Date(d.fecha).toLocaleDateString()}</td>
+                  <td data-label="Nombre">{d.nombre}</td>
+                  <td data-label="Cédula">{d.cedula}</td>
+                  <td data-label="Cargo">{d.cargo}</td>
+                  <td data-label="Registrado por">{d.creadoPor?.username || "Sin usuario"}</td>
+                  <td data-label="PDF">
+                    <button 
+                      onClick={() => descargarPDF(d._id)}
+                      className="download-btn"
+                    >
+                      ⬇️ Descargar PDF
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
 
-      <button
-        type="button"
-        onClick={() => navigate("/")}
-        style={{
-          marginTop: "20px",
-          padding: "10px 20px",
-          backgroundColor: "#007bff",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-        }}
-      >
-        Volver
-      </button>
+        <button
+          type="button"
+          onClick={() => navigate("/")}
+          className="back-btn"
+        >
+          ← Volver
+        </button>
+      </div>
     </div>
   );
 }

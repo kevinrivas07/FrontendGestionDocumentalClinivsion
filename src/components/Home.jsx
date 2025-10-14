@@ -53,7 +53,13 @@ const Home = () => {
             <FaClipboardList size={32} className="card-icon green" />
             <p>📂 Ver Asistencias Guardadas</p>
           </div>
-        </div>
+        
+         {/* Ver listas dotaciones */}
+          <div className="card" onClick={() => navigate("/dotaciones-list")}>
+            <FaClipboardList size={32} className="card-icon green" />
+            <p>📂 Ver Dotaciones Guardadas</p>
+          </div>
+          </div>
 
         <button className="logout-btn" onClick={handleLogout}>
           <FaSignOutAlt size={16} />

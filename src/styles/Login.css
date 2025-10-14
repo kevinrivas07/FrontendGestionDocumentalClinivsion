@@ -124,6 +124,17 @@ html, body {
   text-decoration: underline;
 }
 
+.created {
+  position: fixed;
+  bottom: 10px;
+  left: 15px;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+
+
 /* Título superior */
 .title {
   font-size: 50px;
