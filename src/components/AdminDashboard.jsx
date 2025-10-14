@@ -143,6 +143,15 @@ const AdminDashboard = () => {
             ➕ Crear nuevo usuario
           </button>
 
+          {/* subir PDF 
+          <button 
+            className={`nav-btn ${view === "crear" ? "active" : ""}`}
+            onClick={() => setView("crear")}
+          >
+            🔼 Subir PDF
+          </button>
+          */ }
+
           <button 
             className={`nav-btn ${view === "lista" ? "active" : ""}`}
             onClick={() => setView("lista")}
