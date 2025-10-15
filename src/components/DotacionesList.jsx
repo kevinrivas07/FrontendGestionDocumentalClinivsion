@@ -6,24 +6,49 @@ import "../styles/DotacionesList.css";
 export default function DotacionesList() {
   const navigate = useNavigate();
   const [dotaciones, setDotaciones] = useState([]);
+  const [userRole, setUserRole] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDotaciones = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/dotaciones");
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          console.warn("⚠️ No hay token en localStorage. Redirigiendo al login...");
+          navigate("/login");
+          return;
+        }
+
+        // ✅ Obtener rol del usuario
+        const userData = JSON.parse(localStorage.getItem("user"));
+        if (userData && userData.role) setUserRole(userData.role);
+
+        // ✅ Obtener dotaciones (según el rol)
+        const res = await axios.get("http://localhost:5000/api/dotaciones", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        console.log("📦 Dotaciones recibidas:", res.data);
         setDotaciones(res.data);
       } catch (err) {
-        console.error("❌ Error al cargar dotaciones:", err);
+        console.error("❌ Error al cargar dotaciones:", err.response?.data || err.message);
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchDotaciones();
-  }, []);
+  }, [navigate]);
 
   const descargarPDF = async (id) => {
     try {
+      const token = localStorage.getItem("token");
       const res = await axios.get(`http://localhost:5000/api/dotaciones/${id}/pdf`, {
         responseType: "blob",
+        headers: { Authorization: `Bearer ${token}` },
       });
+
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement("a");
       link.href = url;
@@ -37,64 +62,68 @@ export default function DotacionesList() {
     }
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "Sin fecha";
+    const fecha = new Date(dateString);
+    return fecha.toLocaleDateString("es-CO", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  if (loading) {
+    return <div className="loading-state">Cargando dotaciones...</div>;
+  }
+
   return (
-    <div className="dotaciones-list-wrap">
+    <div className="dotaciones-wrap">
       <img
         src={new URL("../assets/vision.jpg", import.meta.url).href}
         alt="Clínica de la Visión"
-        className="header-image"
+        className="home-hero-img"
       />
+      <h2>
+        {userRole === "admin"
+          ? "📦 Todas las Entregas de Dotación"
+          : "📦 Mis Entregas de Dotación"}
+      </h2>
 
-      <div className="dotaciones-list-container">
-        <h2>📦 Entregas de Dotación Registradas</h2>
+      {dotaciones.length === 0 ? (
+        <p className="dotaciones-empty">No hay registros de dotación.</p>
+      ) : (
+        <ul className="dotaciones-list">
+          {dotaciones.map((d) => (
+            <li key={d._id} className="dotaciones-item">
+              <div className="dotaciones-info">
+                <strong className="dotaciones-name">{d.nombre || "Sin nombre"}</strong>
+                <span className="dotaciones-date">{formatDate(d.fecha)}</span>
+                <small className="dotaciones-details">
+                  🪪 {d.cedula || "Sin cédula"} • 💼 {d.cargo || "Sin cargo"}
+                </small>
+                {userRole === "admin" && (
+                  <small className="dotaciones-user">
+                    👤 {d.creadoPor?.username || "Desconocido"}
+                  </small>
+                )}
+              </div>
+              <button
+                className="download-btn"
+                onClick={() => descargarPDF(d._id)}
+              >
+                ⬇️ Descargar PDF
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
 
-        {dotaciones.length === 0 ? (
-          <div className="empty-state">
-            No hay registros de dotación guardados.
-          </div>
-        ) : (
-          <table className="dotaciones-table">
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Nombre</th>
-                <th>Cédula</th>
-                <th>Cargo</th>
-                <th>Registrado por</th>
-                <th>PDF</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dotaciones.map((d) => (
-                <tr key={d._id}>
-                  <td data-label="Fecha">{new Date(d.fecha).toLocaleDateString()}</td>
-                  <td data-label="Nombre">{d.nombre}</td>
-                  <td data-label="Cédula">{d.cedula}</td>
-                  <td data-label="Cargo">{d.cargo}</td>
-                  <td data-label="Registrado por">{d.creadoPor?.username || "Sin usuario"}</td>
-                  <td data-label="PDF">
-                    <button 
-                      onClick={() => descargarPDF(d._id)}
-                      className="download-btn"
-                    >
-                      ⬇️ Descargar PDF
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-
-        <button
-          type="button"
-          onClick={() => navigate("/")}
-          className="back-btn"
-        >
-          ← Volver
-        </button>
-      </div>
-      <a href="" target="" className="created">Created by: Kevin Rivas</a>
+      <button className="back" type="button" onClick={() => navigate("/")}>
+        Volver
+      </button>
+      <a href="#" className="created">
+        Created by: Kevin Rivas
+      </a>
     </div>
   );
 }

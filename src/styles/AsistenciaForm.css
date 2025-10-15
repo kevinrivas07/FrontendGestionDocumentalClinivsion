@@ -42,6 +42,16 @@
   box-shadow: 0 10px 30px rgba(0,0,0,.12);
   object-fit: cover;
 }
+.hour{
+    color: #333;
+    text-align: center;
+    position:relative;
+    margin-top: 10px;
+}
+
+.hour:hover {
+    color: #333;
+}
 
 .fila-datos {
     display: flex;

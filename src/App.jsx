@@ -53,8 +53,8 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <AutoLogout onLogout={handleLogout} />
 
+        
         <Routes>
           {/* 🏠 Raíz: siempre va al login */}
           <Route path="/" element={<Navigate to="/login" replace />} />
