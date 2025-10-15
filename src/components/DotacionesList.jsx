@@ -20,14 +20,16 @@ export default function DotacionesList() {
           return;
         }
 
+        // ✅ Obtener rol del usuario
+        const userData = JSON.parse(localStorage.getItem("user"));
+        if (userData && userData.role) setUserRole(userData.role);
 
-        // ✅ 2. Obtener dotaciones (según el rol)
+        // ✅ Obtener dotaciones (según el rol)
         const res = await axios.get("http://localhost:5000/api/dotaciones", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         console.log("📦 Dotaciones recibidas:", res.data);
-
         setDotaciones(res.data);
       } catch (err) {
         console.error("❌ Error al cargar dotaciones:", err.response?.data || err.message);
@@ -60,68 +62,68 @@ export default function DotacionesList() {
     }
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "Sin fecha";
+    const fecha = new Date(dateString);
+    return fecha.toLocaleDateString("es-CO", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
   if (loading) {
     return <div className="loading-state">Cargando dotaciones...</div>;
   }
 
   return (
-    <div className="dotaciones-list-wrap">
+    <div className="dotaciones-wrap">
       <img
         src={new URL("../assets/vision.jpg", import.meta.url).href}
         alt="Clínica de la Visión"
-        className="header-image"
+        className="home-hero-img"
       />
+      <h2>
+        {userRole === "admin"
+          ? "📦 Todas las Entregas de Dotación"
+          : "📦 Mis Entregas de Dotación"}
+      </h2>
 
-      <div className="dotaciones-list-container">
-        <h2>
-          {userRole === "admin"
-            ? "📦 Todas las Entregas de Dotación"
-            : "📦 Mis Entregas de Dotación"}
-        </h2>
+      {dotaciones.length === 0 ? (
+        <p className="dotaciones-empty">No hay registros de dotación.</p>
+      ) : (
+        <ul className="dotaciones-list">
+          {dotaciones.map((d) => (
+            <li key={d._id} className="dotaciones-item">
+              <div className="dotaciones-info">
+                <strong className="dotaciones-name">{d.nombre || "Sin nombre"}</strong>
+                <span className="dotaciones-date">{formatDate(d.fecha)}</span>
+                <small className="dotaciones-details">
+                  🪪 {d.cedula || "Sin cédula"} • 💼 {d.cargo || "Sin cargo"}
+                </small>
+                {userRole === "admin" && (
+                  <small className="dotaciones-user">
+                    👤 {d.creadoPor?.username || "Desconocido"}
+                  </small>
+                )}
+              </div>
+              <button
+                className="download-btn"
+                onClick={() => descargarPDF(d._id)}
+              >
+                ⬇️ Descargar PDF
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
 
-        {dotaciones.length === 0 ? (
-          <div className="empty-state">No hay registros de dotación.</div>
-        ) : (
-          <table className="dotaciones-table">
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Nombre</th>
-                <th>Cédula</th>
-                <th>Cargo</th>
-                {userRole === "admin" && <th>Registrado por</th>}
-                <th>PDF</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dotaciones.map((d) => (
-                <tr key={d._id}>
-                  <td>{new Date(d.fecha).toLocaleDateString()}</td>
-                  <td>{d.nombre}</td>
-                  <td>{d.cedula}</td>
-                  <td>{d.cargo}</td>
-                  {userRole === "admin" && (
-                    <td>{d.creadoPor?.username || "Sin usuario"}</td>
-                  )}
-                  <td>
-                    <button
-                      onClick={() => descargarPDF(d._id)}
-                      className="download-btn"
-                    >
-                      ⬇️ Descargar PDF
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-
-        <button type="button" onClick={() => navigate("/")} className="back-btn">
-          ← Volver
-        </button>
-      </div>
-      <a href="#" className="created">Created by: Kevin Rivas</a>
+      <button className="back" type="button" onClick={() => navigate("/")}>
+        Volver
+      </button>
+      <a href="#" className="created">
+        Created by: Kevin Rivas
+      </a>
     </div>
   );
 }
