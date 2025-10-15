@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "../styles/Login.css";
+import clinicaImg from "../assets/clinica.png";
+import deLaImg from "../assets/de la.png";
+import visionImg from "../assets/vision.png";
 
 const API_URL = "http://localhost:5000/api";
 
@@ -12,13 +15,22 @@ function Login() {
   const [error, setError] = useState("");
   const [captchaToken, setCaptchaToken] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const navigate = useNavigate();
   const captchaRef = useRef(null);
+  const slides = [clinicaImg, deLaImg, visionImg];
 
   useEffect(() => {
     document.body.classList.add("login-background");
     return () => document.body.classList.remove("login-background");
   }, []);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 3500);
+    return () => clearInterval(intervalId);
+  }, [slides.length]);
 
   // 👇 Si hay sesión activa, redirige según el rol
   useEffect(() => {
@@ -77,9 +89,35 @@ function Login() {
 
   return (
     <div className="main-container">
-      <div className="image-container"></div>
+      <div className="image-container">
+        <div className="carousel">
+          {slides.map((src, index) => (
+            <div
+              key={index}
+              className={`carousel-slide ${index === currentSlide ? "active" : ""}`}
+            >
+              <img src={src} alt={`slide-${index + 1}`} className="carousel-image" />
+            </div>
+          ))}
+          <div className="carousel-indicators">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                aria-label={`Ir al slide ${index + 1}`}
+                className={`indicator-dot ${index === currentSlide ? "active" : ""}`}
+                onClick={() => setCurrentSlide(index)}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
       <div className="login-container">
         <div className="login-box">
+        <img
+          src={new URL("../assets/vision.jpg", import.meta.url).href}
+          alt="Clínica de la Visión"
+          className="hero-img"
+        />
           <h2>INICIO DE SESIÓN</h2>
           <form onSubmit={handleLogin}>
             <div className="input-group">
