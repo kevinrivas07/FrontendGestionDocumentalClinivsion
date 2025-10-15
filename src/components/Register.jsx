@@ -162,15 +162,15 @@ function Register() {
 
     return (
         <div className="register-page">
-            <div className="back-button-container">
-                <Link to="/" className="back-button">← Volver</Link> 
-            </div>
     
             <div className="register-container">  
                 <div className="register-header">
-                    <h1 className="title">CITAMED</h1>
-                    <h2>Crear Cuenta</h2>
-                    <p>Únete a Citamed y gestiona tus citas médicas de manera fácil y segura</p>
+            <img
+                src={new URL("../assets/vision.jpg", import.meta.url).href}
+                alt="Clínica de la Visión"
+                className="hero-img"
+            />
+                <h2>Crear Cuenta</h2>
                 </div>
 
                 {message && (
