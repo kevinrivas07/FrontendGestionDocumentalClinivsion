@@ -6,40 +6,21 @@ import "../styles/DotacionesList.css";
 export default function DotacionesList() {
   const navigate = useNavigate();
   const [dotaciones, setDotaciones] = useState([]);
-  const [userRole, setUserRole] = useState("");
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDotaciones = async () => {
       try {
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-          console.warn("⚠️ No hay token en localStorage. Redirigiendo al login...");
-          navigate("/login");
-          return;
-        }
-
-        // ✅ Obtener rol del usuario
-        const userData = JSON.parse(localStorage.getItem("user"));
-        if (userData && userData.role) setUserRole(userData.role);
-
-        // ✅ Obtener dotaciones (según el rol)
+        const token = localStorage.getItem("token"); // ✅ Token del usuario logueado
         const res = await axios.get("http://localhost:5000/api/dotaciones", {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        console.log("📦 Dotaciones recibidas:", res.data);
         setDotaciones(res.data);
       } catch (err) {
-        console.error("❌ Error al cargar dotaciones:", err.response?.data || err.message);
-      } finally {
-        setLoading(false);
+        console.error("❌ Error cargando dotaciones:", err);
       }
     };
-
     fetchDotaciones();
-  }, [navigate]);
+  }, []);
 
   const descargarPDF = async (id) => {
     try {
@@ -58,7 +39,6 @@ export default function DotacionesList() {
       link.remove();
     } catch (err) {
       console.error("❌ Error al descargar PDF:", err);
-      alert("Error al descargar PDF");
     }
   };
 
@@ -72,41 +52,37 @@ export default function DotacionesList() {
     });
   };
 
-  if (loading) {
-    return <div className="loading-state">Cargando dotaciones...</div>;
-  }
-
   return (
-    <div className="dotaciones-wrap">
+    <div className="dotaciones-list-wrap">
+      {/* 📷 Imagen principal */}
       <img
         src={new URL("../assets/vision.jpg", import.meta.url).href}
         alt="Clínica de la Visión"
-        className="home-hero-img"
+        className="header-image"
       />
-      <h2>
-        {userRole === "admin"
-          ? "📦 Todas las Entregas de Dotación"
-          : "📦 Mis Entregas de Dotación"}
-      </h2>
 
+      {/* 🏥 Título */}
+      <h2>📦 Dotaciones Entregadas</h2>
+
+      {/* 📋 Estado vacío o lista */}
       {dotaciones.length === 0 ? (
-        <p className="dotaciones-empty">No hay registros de dotación.</p>
+        <div className="empty-state">No hay registros de dotación</div>
       ) : (
         <ul className="dotaciones-list">
           {dotaciones.map((d) => (
             <li key={d._id} className="dotaciones-item">
               <div className="dotaciones-info">
-                <strong className="dotaciones-name">{d.nombre || "Sin nombre"}</strong>
+                <span className="dotaciones-name">{d.nombre || "Sin nombre"}</span>
                 <span className="dotaciones-date">{formatDate(d.fecha)}</span>
-                <small className="dotaciones-details">
-                  🪪 {d.cedula || "Sin cédula"} • 💼 {d.cargo || "Sin cargo"}
-                </small>
-                {userRole === "admin" && (
-                  <small className="dotaciones-user">
-                    👤 {d.creadoPor?.username || "Desconocido"}
-                  </small>
+                <span className="dotaciones-details">🪪 {d.cedula || "Sin cédula"}</span>
+                <span className="dotaciones-details">💼 {d.cargo || "Sin cargo"}</span>
+                {d.creadoPor && (
+                  <span className="dotaciones-user">
+                    👤 {d.creadoPor.username || "Desconocido"}
+                  </span>
                 )}
               </div>
+
               <button
                 className="download-btn"
                 onClick={() => descargarPDF(d._id)}
@@ -118,9 +94,12 @@ export default function DotacionesList() {
         </ul>
       )}
 
-      <button className="back" type="button" onClick={() => navigate("/")}>
-        Volver
+      {/* 🔙 Botón volver */}
+      <button className="back-btn" onClick={() => navigate("/")}>
+        ← Volver
       </button>
+
+      {/* ✍️ Autor */}
       <a href="#" className="created">
         Created by: Kevin Rivas
       </a>
