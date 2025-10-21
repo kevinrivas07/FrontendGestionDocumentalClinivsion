@@ -117,7 +117,7 @@ export default function AsistenciaForm() {
   return (
     <div className="asistencia-wrap">
       <img
-        src={new URL("../assets/vision.jpg", import.meta.url).href}
+        src={new URL("../assets/clinicavision.jpg", import.meta.url).href}
         alt="Clínica de la Visión"
         className="home-img"
       />

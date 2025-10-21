@@ -4,6 +4,7 @@
   justify-content: center;
   align-items: center;
   padding: 2rem;
+  margin-top: 150px;
   min-height: 100vh;
   background: radial-gradient(40vmax 40vmax at 30% 20%, rgba(99, 179, 237, 0.12), transparent),
     radial-gradient(35vmax 35vmax at 70% 80%, rgba(72, 187, 120, 0.12), transparent);

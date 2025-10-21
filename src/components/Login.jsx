@@ -114,7 +114,7 @@ function Login() {
       <div className="login-container">
         <div className="login-box">
         <img
-          src={new URL("../assets/vision.jpg", import.meta.url).href}
+          src={new URL("../assets/clinicavision.jpg", import.meta.url).href}
           alt="Clínica de la Visión"
           className="hero-img"
         />

@@ -52,7 +52,7 @@ export default function AsistenciaList() {
   return (
     <div className="alist-wrap">
       <img
-        src={new URL("../assets/vision.jpg", import.meta.url).href}
+        src={new URL("../assets/clinicavision.jpg", import.meta.url).href}
         alt="Clínica de la Visión"
         className="home-hero-img"
       />
